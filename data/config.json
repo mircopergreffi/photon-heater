@@ -39,6 +39,19 @@
         "pin": ""
     },
 
+    "sensors_extra":
+    [
+        {
+            "name": "Resin",
+            "type": "ntc",
+            "B": 3950,
+            "T0": 298.15,
+            "R0": 100000,
+            "pullup": 47000,
+            "pin": ""
+        }
+    ],
+
     "control_type": "pid",
     "control_pid": [1.0, 0.0, 0.0]
 }
