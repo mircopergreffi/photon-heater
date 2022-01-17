@@ -1,7 +1,7 @@
 
 
-#IFNDEF ANALOG_SENSOR_H
-#DEFINE ANALOG_SENSOR_H
+#ifndef ANALOG_SENSOR_H
+#define ANALOG_SENSOR_H
 
 #include <String.h>
 
@@ -31,4 +31,4 @@ class AnalogSensor
         String * mName;
 };
 
-#ENDIF /* ANALOG_SENSOR_H */
+#endif /* ANALOG_SENSOR_H */
