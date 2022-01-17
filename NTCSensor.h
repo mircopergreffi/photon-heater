@@ -25,12 +25,12 @@ class NTCSensor : public ResistorSensor
         static NTCSensor fromJson(JsonObject json)
         {
             return NTCSensor(
-                json["pin"].toInt(),
+                json["pin"],
                 json["name"],
                 json["pullup"],
                 json["beta"],
                 json["R0"],
-                json["T0"],)
+                json["T0"])
         }
     private:
         float mBetaInverse, mR0, mT0Inverse;
