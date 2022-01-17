@@ -1,7 +1,7 @@
 
 
-#IFNDEF RESISTOR_SENSOR_H
-#DEFINE RESISTOR_SENSOR_H
+#ifndef RESISTOR_SENSOR_H
+#define RESISTOR_SENSOR_H
 
 #include "AnalogSensor.h"
 
@@ -22,4 +22,4 @@ class ResistorSensor : public AnalogSensor
         float mPullUp;
 };
 
-#ENDIF /* RESISTOR_SENSOR_H */
+#endif /* RESISTOR_SENSOR_H */
