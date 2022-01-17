@@ -1,6 +1,6 @@
 
-#IFNDEF TEMPERATURE_SENSOR_H
-#DEFINE TEMPERATURE_SENSOR_H
+#ifndef TEMPERATURE_SENSOR_H
+#define TEMPERATURE_SENSOR_H
 
 #include <ArduinoJson.h>
 #include "AnalogSensor.h"
@@ -8,4 +8,4 @@
 
 
 
-#ENDIF /* TEMPERATURE_SENSOR_H */
+#endif /* TEMPERATURE_SENSOR_H */
