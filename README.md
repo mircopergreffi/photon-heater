@@ -2,7 +2,7 @@
 
 ## Per Enrico
 
-Metti i file del web-client nella cartella \flash\web-client
+\flash\web-client
 
 Web Interface:
 - plot:
@@ -12,3 +12,5 @@ Web Interface:
 - fan-mode: switch auto/manual;
 - fan-speed: (disabled in auto mode);
 - configs: text-area (JSON), save button, reset button;
+
+NB: see \flash\config.json for maximum and minimum settable temperatures (```ambient_temp_max``` e ```ambient_temp_min```), maxium and minimum settable fan speed (```fan_speed_max``` e ```fan_speed_min```).
