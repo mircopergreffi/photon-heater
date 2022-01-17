@@ -2,10 +2,51 @@
 <html>
     <head>
         <title>Photon Heater</title>
-        <link rel="stylesheet" ref="style.css" />
-        <script src="script.js"></script>
+        <link rel="stylesheet" href="style.css" />
+        <script src="chart.min.js"></script>
+        <script src="chartjs-plugin-annotation.min.js"></script>
+        <script src="ajax.js"></script>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div class="container">
+            <h1>Ti prego stampa</h1>
+            <div class="canvas-container mb-8">
+                <canvas id="temperatureChart" width="400" height="250"></canvas>
+            </div>
+            <form action="salva-roba" method="POST" class="mb-8">
+                <div class="mb-4">
+                    <div class="range-slidecontainer">
+                        <label class="range-output" for="temperature">Temperature (0-50): </label>
+                        <input class="range-slider" type="range" id="temperature" name="temperature" min="0" max="50" value="25">
+                    </div>
+                </div>
+                <div class="mb-4 flex align-center">
+                    <div class="mr-8">
+                        Fan mode:
+                    </div>
+                    <div class="flex align-center">
+                        Manual
+                        <label class="switch mx-4">
+                            <input type="checkbox" name="fan-mode-auto" id="fan-mode-auto">
+                            <span class="slider round"></span>
+                        </label>
+                        Auto
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="range-slidecontainer">
+                        <label class="range-output" for="speed">Fan speed (0-50): </label>
+                        <input class="range-slider" type="range" id="speed" name="speed" min="0" max="50" value="25">
+                    </div>
+                </div>
+                <input type="submit" value="Salva">
+            </form>
+            <h2>Settings</h2>
+            <form id="config-form" action="salva-config" method="post">
+                <div class="config-inputs"></div>
+                <input type="submit" value="Salva">
+            </form>
+        </div>
+        <script src="script.js"></script>
     </body>
 </html>
