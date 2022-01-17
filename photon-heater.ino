@@ -4,7 +4,7 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 
-StaticJsonDocument<256> doc;
+StaticJsonDocument<1024> doc;
 AsyncWebServer server(80);
 
 bool readConfigFile()
@@ -17,7 +17,9 @@ bool readConfigFile()
 	}
 	
 	size_t size = file.size();
-	if (size > 4096) {
+  Serial.print("Size cred file: ");
+  Serial.println(size);
+	if (size > 1024) {
 		Serial.println("Config file size is too large");
 		return false;
 	}
@@ -25,7 +27,8 @@ bool readConfigFile()
   auto error = deserializeJson(doc, file);
 	if (error)
 	{
-		Serial.println(F("Failed to read file"));
+		Serial.println("deserializeJson() failed with code ");
+    Serial.println(error.c_str());
 		return false;
 	}
 
@@ -61,48 +64,45 @@ void setup() {
 
 	// Print ESP32 Local IP Address
 	Serial.println(WiFi.localIP());
-	
+
+//  server.serveStatic("/app", SPIFFS, "/web-client");
+  
 	// Route for root / web page
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-		request->send(SPIFFS, "/web-client/index.html", "text/html");
+		request->send(SPIFFS, "/web-client/index.html");
 	});
 	
-	// Route to load style.css file
-	server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-		request->send(SPIFFS, "/web-client/style.css", "text/css");
-	});
-
-  // Route to load script.js file
-  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/web-client/script.js", "text/javascript");
-  });
-  // Route to load script.js file
-  server.on("/ajax.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/web-client/ajax.js", "text/javascript");
-  });
- // Route to load chart.min.js file
-  server.on("/chart.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/web-client/chart.min.js", "text/javascript");
-  });
- // Route to load script.js file
-  server.on("/chartjs-plugin-annotation.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/web-client/chartjs-plugin-annotation.min.js", "text/javascript");
-  });
-	
-	// Route to load config.json file
-	server.on("/config.json", HTTP_GET, [](AsyncWebServerRequest *request){
-		request->send(SPIFFS, "/config.json", "text/css");
-	});
-
-	// Route to save config.json file
-	server.on("/config.json", HTTP_POST, [](AsyncWebServerRequest *request){
-		
-	});
+//	// Route to load style.css file
+//	server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+//		request->send(SPIFFS, "/web-client/style.css", "text/css");
+//	});
+//
+//  // Route to load script.js file
+//  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+//    request->send(SPIFFS, "/web-client/script.js", "text/javascript");
+//  });
+//  // Route to load script.js file
+//  server.on("/ajax.js", HTTP_GET, [](AsyncWebServerRequest *request){
+//    request->send(SPIFFS, "/web-client/ajax.js", "text/javascript");
+//  });
+// // Route to load chart.min.js file
+//  server.on("/chart.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
+//    request->send(SPIFFS, "/web-client/chart.min.js", "text/javascript");
+//  });
+// // Route to load script.js file
+//  server.on("/chartjs-plugin-annotation.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
+//    request->send(SPIFFS, "/web-client/chartjs-plugin-annotation.min.js", "text/javascript");
+//  });
+//	
+//	// Route to load config.json file
+//	server.on("/config.json", HTTP_GET, [](AsyncWebServerRequest *request){
+//		request->send(SPIFFS, "/config.json", "text/css");
+//	});
 
 	// Start server
 	server.begin();
 }
 
 void loop() {
-	
+
 }
