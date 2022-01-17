@@ -4,41 +4,36 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 
-JsonObject & config;
+StaticJsonDocument<256> doc;
 AsyncWebServer server(80);
 
 bool readConfigFile()
 {
-	File f = SPIFFS.open("/config.json", "r");
-	if (!f)
+	File file = SPIFFS.open("/config.json", "r");
+	if (!file)
 	{
 		Serial.println("Failed to open config file");
 		return false;
 	}
 	
-	size_t size = configFile.size();
+	size_t size = file.size();
 	if (size > 4096) {
 		Serial.println("Config file size is too large");
 		return false;
 	}
 	
-	StaticJsonBuffer<256> jsonBuffer;
-
-	config = jsonBuffer.parseObject(f);
-	if (!config.success())
+  auto error = deserializeJson(doc, file);
+	if (error)
 	{
-		Serial.println(F("Failed to read file, using default configuration"));
+		Serial.println(F("Failed to read file"));
 		return false;
 	}
 
-	f.close();
+	file.close();
 	return true;
 }
 
 void setup() {
-	
-	// Serial port for debugging purposes
-	Serial.begin(115200);
 	
 	// Serial port for debugging purposes
 	Serial.begin(115200);
@@ -50,10 +45,15 @@ void setup() {
 	}
 
 	// Read Config
-	readConfigFile();
+	if (!readConfigFile())
+  {
+    return;
+  }
 	
 	// Connect to Wi-Fi
-	WiFi.begin(config["wifi_ssid"], config["wifi_password"]);
+  const char * ssid = doc["wifi_ssid"];
+  const char * pass = doc["wifi_password"];
+	WiFi.begin(ssid, pass);
 	while (WiFi.status() != WL_CONNECTED) {
 		delay(1000);
 		Serial.println("Connecting to WiFi..");
