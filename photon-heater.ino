@@ -4,8 +4,12 @@
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 
-StaticJsonDocument<1024> doc;
+#include "Heater.h"
+
+DynamicJsonDocument doc(2048);
 AsyncWebServer server(80);
+
+Heater heater;
 
 bool readConfigFile()
 {
@@ -19,7 +23,7 @@ bool readConfigFile()
 	size_t size = file.size();
   Serial.print("Size cred file: ");
   Serial.println(size);
-	if (size > 1024) {
+	if (size > 2048) {
 		Serial.println("Config file size is too large");
 		return false;
 	}
@@ -52,6 +56,8 @@ void setup() {
   {
     return;
   }
+
+  heater(doc);
 	
 	// Connect to Wi-Fi
   const char * ssid = doc["wifi_ssid"];
@@ -67,10 +73,10 @@ void setup() {
 
   server.serveStatic("/", SPIFFS, "/");
   
-//	// Route for root / web page
-//	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-//		request->send(SPIFFS, "/web-client/index.html");
-//	});
+	// Route for root / web page
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+		request->send(SPIFFS, "/web-client/index.html");
+	});
 	
 //	// Route to load style.css file
 //	server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
