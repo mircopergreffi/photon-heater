@@ -1,7 +1,7 @@
 
 
-#IFNDEF NTC_SENSOR_H
-#DEFINE NTC_SENSOR_H
+#ifndef NTC_SENSOR_H
+#define NTC_SENSOR_H
 
 #include <math.h>
 #include "ResistorSensor.h"
@@ -22,12 +22,18 @@ class NTCSensor : public ResistorSensor
             // Steinhart–Hart equation:
             return 1.0/(mT0Inverse + mBetaInverse*log(R/mR0));
         }
-        static NTCSensor fromJson(JsonObject & json)
+        static NTCSensor fromJson(JsonObject json)
         {
-            return NTCSensor(json["pin"].toInt(), )
+            return NTCSensor(
+                json["pin"].toInt(),
+                json["name"],
+                json["pullup"],
+                json["beta"],
+                json["R0"],
+                json["T0"],)
         }
     private:
-        float mBeta, mR0, mT0Inverse;
+        float mBetaInverse, mR0, mT0Inverse;
 };
 
-#ENDIF /* NTC_SENSOR_H */
+#endif /* NTC_SENSOR_H */
