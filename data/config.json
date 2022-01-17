@@ -1,20 +1,37 @@
 {
+    "heater_pin": "",
     "heater_temp_max": 60,
     "heater_temp_min": 0,
     "heater_temp_critical": 80,
     "heater_power_max": 1.0,
     "heater_duty_cycle_max": 0.95,
     "heater_duty_cycle_min": 0.05,
-    "heater_pid": [1.0, 0.0, 0.0],
+    "heater_sensor_type": "ntc-3950-100k",
+    "heater_sensor_pullup": 47000,
+    "heater_sensor_pin": "",
     
-    "fan_air_temp_max": 35,
-    "fan_air_temp_min": 0,
+    "fan_pin": "",
     "fan_speed_max": 1.0,
     "fan_speed_min": 0.4,
     "fan_duty_cycle_max": 0.95,
     "fan_duty_cycle_min": 0.05,
-
+    
     "ambient_temp_max": 30,
     "ambient_temp_min": 25,
-    "ambient_temp"
+    "ambient_sensor_type": "ntc-3950-100k",
+    "ambient_sensor_pullup": 47000,
+    "ambient_sensor_pin": "",
+
+    "sensors_extra":
+    [
+        {
+            "name": "Resin",
+            "type": "ntc-3950-100k",
+            "pullup": 47000,
+            "pin": ""
+        }
+    ],
+
+    "control_type": "pid",
+    "control_pid": [1.0, 0.0, 0.0]
 }
