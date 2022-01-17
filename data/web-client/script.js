@@ -6,7 +6,7 @@ const graphConfig = {
             borderColor: "#e02900",
             backgroundColor: "#e0290066",
             showLine: true,
-            data: [{x: 10, y: 20}, {x: 20, y: 10}],
+            data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
         }],
     },
     options: {
@@ -28,8 +28,8 @@ const graphConfig = {
                 annotations: {
                     criticalLine: {
                         type: 'line',
-                        yMin: 10,
-                        yMax: 10,
+                        yMin: 12,
+                        yMax: 12,
                         borderColor: 'rgb(255, 99, 132)',
                         borderWidth: 2,
                     }
@@ -42,6 +42,8 @@ const graphConfig = {
 const ctx = document.getElementById("temperatureChart")
 const myChart = new Chart(ctx, graphConfig)
 
+const fanSpeed = document.getElementById("speed")
+const temperature = document.getElementById("temperature")
 const sliders = Array.from(document.getElementsByClassName("range-slidecontainer"))
 
 sliders.forEach(s =>
@@ -49,15 +51,12 @@ sliders.forEach(s =>
         const input = s.getElementsByClassName("range-slider")[0]
         const setValue = () => {
             const out = s.getElementsByClassName("range-output")[0]
-            console.log(out)
-            console.log(input)
-            out.innerHTML = out.innerHTML.substring(0, out.innerHTML.indexOf(": ")+2) + input.value
+            out.textContent = out.textContent.substring(0, out.textContent.indexOf(": ")+2) + input.value
         }
         input.addEventListener('input', setValue)
         setValue()
     })
 
-const fanSpeed = document.getElementById("speed")
 
 document.getElementById("fan-mode-auto").addEventListener('change', (e) =>
 {
@@ -113,7 +112,30 @@ function populateForm(configs)
     }
 }
 
-populateForm(configs)
+function updateMaxMin(configs)
+{
+    const setRange = (e, max, min) =>
+    {
+        e.max = max
+        e.min = min
+        const l = e.parentElement.getElementsByTagName("label")[0]
+        const a = l.textContent.indexOf("(")
+        const b = l.textContent.indexOf(")")
+        l.textContent = l.textContent.substring(0, a) + min + "-" + max + l.textContent.substring(b, l.textContent.length)
+        e.dispatchEvent(new Event('input'))
+    }
+
+    setRange(temperature, configs.heater_temp_max, configs.heater_temp_min)
+    setRange(fanSpeed, configs.fan_speed_max, configs.fan_speed_min)
+}
+
+function loadConfigs(configs)
+{
+    populateForm(configs)
+    updateMaxMin(configs)
+}
+
+loadConfigs(configs)
 
 /* minAjax({
     url:"config.json",
