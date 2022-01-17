@@ -11,7 +11,7 @@
     "heater_duty_cycle_min": 0.05,
     "heater_sensor": 
     {
-        "name": "Resin",
+        "name": "Heater",
         "type": "ntc",
         "B": 3950,
         "T0": 298.15,
@@ -30,7 +30,7 @@
     "ambient_temp_min": 25,
     "ambient_sensor": 
     {
-        "name": "Resin",
+        "name": "Ambient",
         "type": "ntc",
         "B": 3950,
         "T0": 298.15,
