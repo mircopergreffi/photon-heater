@@ -1,0 +1,20 @@
+{
+    "heater_temp_max": 60,
+    "heater_temp_min": 0,
+    "heater_temp_critical": 80,
+    "heater_power_max": 1.0,
+    "heater_duty_cycle_max": 0.95,
+    "heater_duty_cycle_min": 0.05,
+    "heater_pid": [1.0, 0.0, 0.0],
+    
+    "fan_air_temp_max": 35,
+    "fan_air_temp_min": 0,
+    "fan_speed_max": 1.0,
+    "fan_speed_min": 0.4,
+    "fan_duty_cycle_max": 0.95,
+    "fan_duty_cycle_min": 0.05,
+
+    "ambient_temp_max": 30,
+    "ambient_temp_min": 25,
+    "ambient_"
+}
