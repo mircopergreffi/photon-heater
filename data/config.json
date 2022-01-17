@@ -1,4 +1,7 @@
 {
+    "wifi_ssid": "TIM-25786986",
+    "wifi_password": "wR4@SNR6jhnz",
+
     "heater_pin": "",
     "heater_temp_max": 60,
     "heater_temp_min": 0,
