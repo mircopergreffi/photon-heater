@@ -65,12 +65,12 @@ void setup() {
 	// Print ESP32 Local IP Address
 	Serial.println(WiFi.localIP());
 
-//  server.serveStatic("/app", SPIFFS, "/web-client");
+  server.serveStatic("/", SPIFFS, "/");
   
-	// Route for root / web page
-	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-		request->send(SPIFFS, "/web-client/index.html");
-	});
+//	// Route for root / web page
+//	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+//		request->send(SPIFFS, "/web-client/index.html");
+//	});
 	
 //	// Route to load style.css file
 //	server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
