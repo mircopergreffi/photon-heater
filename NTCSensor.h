@@ -30,7 +30,7 @@ class NTCSensor : public ResistorSensor
                 json["pullup"],
                 json["beta"],
                 json["R0"],
-                json["T0"])
+                json["T0"]);
         }
     private:
         float mBetaInverse, mR0, mT0Inverse;
