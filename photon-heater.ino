@@ -72,10 +72,22 @@ void setup() {
 		request->send(SPIFFS, "/web-client/style.css", "text/css");
 	});
 
-	// Route to load script.js file
-	server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
-		request->send(SPIFFS, "/web-client/script.js", "text/javascript");
-	});
+  // Route to load script.js file
+  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/web-client/script.js", "text/javascript");
+  });
+  // Route to load script.js file
+  server.on("/ajax.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/web-client/ajax.js", "text/javascript");
+  });
+ // Route to load chart.min.js file
+  server.on("/chart.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/web-client/chart.min.js", "text/javascript");
+  });
+ // Route to load script.js file
+  server.on("/chartjs-plugin-annotation.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/web-client/chartjs-plugin-annotation.min.js", "text/javascript");
+  });
 	
 	// Route to load config.json file
 	server.on("/config.json", HTTP_GET, [](AsyncWebServerRequest *request){
