@@ -22,6 +22,10 @@ class NTCSensor : public ResistorSensor
             // Steinhart–Hart equation:
             return 1.0/(mT0Inverse + mBetaInverse*log(R/mR0));
         }
+        static NTCSensor fromJson(JsonObject & json)
+        {
+            return NTCSensor(json["pin"].toInt(), )
+        }
     private:
         float mBeta, mR0, mT0Inverse;
 };
