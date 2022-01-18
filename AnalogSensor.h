@@ -4,14 +4,15 @@
 #define ANALOG_SENSOR_H
 
 #include <String.h>
+#include <ArduinoJson.h>
 
 class AnalogSensor
 {
     public:
-        AnalogSensor(int pin, String * name)
+        AnalogSensor(JsonObject json)
         {
-            mPin = pin;
-            mName = name;
+            mPin = json["pin"];
+            mName = json["name"];
         }
         virtual float readValue()
         {
