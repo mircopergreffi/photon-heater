@@ -3,7 +3,6 @@
 #define HEATER_H
 
 #include <ArduinoJson.h>
-#include "NTCSensor.h"
 
 class Heater
 {
@@ -17,14 +16,22 @@ class Heater
             mPowerMax = json["heater_power_max"];
             mDutyCycleMax = json["heater_duty_cycle_max"];
             mDutyCycleMin = json["heater_duty_cycle_min"];
-            mSensor = NTCSensor::fromJson(json["heater_sensor"]);
+        }
+        void setPower(float power)
+        {
+            if (power >= mPowerMax)
+                power = mPowerMax;
+            if (power < mDutyCycleMin)
+                power = 0;
+            else if (power > mDutyCycleMax)
+                power = 1;
+            analogWrite(mPin, power*255);
         }
     private:
         int mPin;
         float mTempMax, mTempMin, mTempCritical;
         float mPowerMax;
         float mDutyCycleMax, mDutyCycleMin;
-        NTCSensor mSensor;
 };
 
 #endif /* HEATER_H */
