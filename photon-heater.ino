@@ -10,6 +10,7 @@ DynamicJsonDocument doc(2048);
 AsyncWebServer server(80);
 
 Heater heater;
+NTCSensor sensorHeater, sensorAir;
 
 bool readConfigFile()
 {
@@ -58,6 +59,7 @@ void setup() {
   }
 
   heater(doc);
+  sensorHeater(doc["heater
 	
 	// Connect to Wi-Fi
   const char * ssid = doc["wifi_ssid"];
