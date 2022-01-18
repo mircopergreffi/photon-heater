@@ -8,10 +8,10 @@
 class ResistorSensor : public AnalogSensor
 {
     public:
-        ResistorSensor(int pin, String * name, float pullup)
-        : AnalogSensor(pin, name)
+        ResistorSensor(JsonObject json)
+        : AnalogSensor(json)
         {
-            mPullUp = pullup;
+            mPullUp = json["pullup"];
         }
         float readValue()
         {
