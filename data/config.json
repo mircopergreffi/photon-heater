@@ -7,7 +7,7 @@
 
 	"heater":
 	{
-		"pin": "",
+		"pin": "17",
 		"temp_max": 60,
 		"temp_min": 0,
 		"temp_critical": 80,
@@ -20,13 +20,13 @@
 			"T0": 25,
 			"R0": 100000,
 			"pullup": 47000,
-			"pin": ""
+			"pin": "4"
 		}
 	},
 
 	"fan":
 	{
-		"pin": "",
+		"pin": "16",
 		"speed_max": 1.0,
 		"speed_min": 0.4
 	},
@@ -41,7 +41,7 @@
 		"T0": 25,
 		"R0": 100000,
 		"pullup": 47000,
-		"pin": ""
+		"pin": "2"
 	},
 
 	"resin_sensor":
@@ -52,13 +52,13 @@
 		"T0": 25,
 		"R0": 100000,
 		"pullup": 47000,
-		"pin": ""
+		"pin": "15"
 	},
 
 	"control":
 	{
 		"type": "pid",
-		"p": 1.0,
+		"p": 0.1,
 		"i": 0.0,
 		"d": 0.0
 	}
