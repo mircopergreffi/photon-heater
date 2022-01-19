@@ -5,15 +5,56 @@
 #include <SPIFFS.h>
 
 #include "Heater.h"
+#include "Fan.h"
+#include "NTCSensor.h"
+#include "TemperatureHistory.h"
 
-DynamicJsonDocument doc(2048);
 AsyncWebServer server(80);
 
 Heater heater;
-NTCSensor sensorHeater, sensorAir;
+Fan fan;
+NTCSensor sensorHeater;
+NTCSensor sensorAir;
+String sensorNames[] = {"Heater","Air"};
+TemperatureHistory<60,2> temperatureHistory(sensorNames);
+
+
+bool loadFromJson(StaticJsonDocument<2048> &doc)
+{
+	heater.loadFromJson(doc["heater"]);
+	fan.loadFromJson(doc["fan"]);
+	sensorHeater.loadFromJson(doc["heater"]["sensor"]);
+	sensorAir.loadFromJson(doc["air_sensor"]);
+	return true;
+}
+
+bool connectToWiFi(StaticJsonDocument<2048> &doc)
+{
+	// Connect to Wi-Fi
+	const char * ssid = doc["wifi"]["ssid"];
+
+	if (WiFi.status() == WL_CONNECTED)
+		if (WiFi.SSID().compareTo(ssid) == 0)
+			return true;
+
+	Serial.println(pass);
+
+	WiFi.begin(ssid, pass);
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(1000);
+		Serial.println("Connecting to WiFi..");
+	}
+	
+	// Print ESP32 Local IP Address
+	Serial.println(WiFi.localIP());
+
+	return true;
+}
 
 bool readConfigFile()
 {
+	StaticJsonDocument<2048> doc;
+
 	File file = SPIFFS.open("/config.json", "r");
 	if (!file)
 	{
@@ -37,6 +78,11 @@ bool readConfigFile()
 		return false;
 	}
 
+	if (!loadFromJson(doc))
+		return false;
+	if (!connectToWiFi(doc))
+		return false;
+
 	file.close();
 	return true;
 }
@@ -57,34 +103,26 @@ void setup() {
 	{
 		return;
 	}
-
-	heater(doc);
-	sensorHeater(doc["heater_sensor"]);
-	sensorAir(doc[""]);
 	
-	// Connect to Wi-Fi
-	const char * ssid = doc["wifi_ssid"];
-	const char * pass = doc["wifi_password"];
-	WiFi.begin(ssid, pass);
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(1000);
-		Serial.println("Connecting to WiFi..");
-	}
-	
-	// Print ESP32 Local IP Address
-	Serial.println(WiFi.localIP());
-	
-	server.serveStatic("/", SPIFFS, "/");
-
 	// Route for root / web page
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
 		request->send(SPIFFS, "/index.html");
 	});
+
+	server.on("/history.json", HTTP_GET, [](AsyncWebServerRequest *request){
+		unsigned long fromTimestamp = 0;
+		AsyncResponseStream * response = request->beginResponseStream("application/json");
+		serializeJson(temperatureHistory.getJson(fromTimestamp), *response);
+		request->send(response);
+	});
 	
+	server.serveStatic("/", SPIFFS, "/");
+
 	// Start server
 	server.begin();
 }
 
 void loop() {
-	
+	temperatureHistory.push({1.0, 2.0});
+	delay(1000);
 }
