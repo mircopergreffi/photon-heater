@@ -15,9 +15,11 @@ Heater heater;
 Fan fan;
 NTCSensor sensorHeater;
 NTCSensor sensorAir;
-String sensorNames[] = {"Heater","Air"};
-TemperatureHistory<60,2> temperatureHistory(sensorNames);
+const char * sensorNames[] = {"Heater","Air"};
+TemperatureHistory<60, 2> temperatureHistory(sensorNames);
 
+float heaterPower, setpointTemp, heaterTemp, airTemp;
+PID controller(heaterTemp, heaterPower, setpointTemp, 0.0, 0.0, 0.0, DIRECT);
 
 bool loadFromJson(StaticJsonDocument<2048> &doc)
 {
@@ -25,6 +27,9 @@ bool loadFromJson(StaticJsonDocument<2048> &doc)
 	fan.loadFromJson(doc["fan"]);
 	sensorHeater.loadFromJson(doc["heater"]["sensor"]);
 	sensorAir.loadFromJson(doc["air_sensor"]);
+	controller.SetTunings(doc["control"]["p"].as<float>(), doc["control"]["i"].as<float>(), doc["control"]["d"].as<float>());
+	controller.SetOutputLimits(0.0, 1.0);
+	controller.SetSampleTime(1000);
 	return true;
 }
 
@@ -37,7 +42,7 @@ bool connectToWiFi(StaticJsonDocument<2048> &doc)
 		if (WiFi.SSID().compareTo(ssid) == 0)
 			return true;
 
-	Serial.println(pass);
+	const char * pass = doc["wifi"]["password"];
 
 	WiFi.begin(ssid, pass);
 	while (WiFi.status() != WL_CONNECTED) {
@@ -111,6 +116,9 @@ void setup() {
 
 	server.on("/history.json", HTTP_GET, [](AsyncWebServerRequest *request){
 		unsigned long fromTimestamp = 0;
+		if (request->hasParam("timestamp")){
+			fromTimestamp = request->getParam("timestamp")->value().toInt();
+		}
 		AsyncResponseStream * response = request->beginResponseStream("application/json");
 		serializeJson(temperatureHistory.getJson(fromTimestamp), *response);
 		request->send(response);
@@ -123,6 +131,10 @@ void setup() {
 }
 
 void loop() {
-	temperatureHistory.push({1.0, 2.0});
+	float heaterTemp = sensorHeater.readValue();
+	float airTemp = sensorAir.readValue();
+
+	float values[] = {heaterTemp, airTemp};
+	temperatureHistory.push(values);
 	delay(1000);
 }
