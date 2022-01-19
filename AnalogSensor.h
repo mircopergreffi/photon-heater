@@ -3,16 +3,25 @@
 #ifndef ANALOG_SENSOR_H
 #define ANALOG_SENSOR_H
 
+#include <Arduino.h>
 #include <String.h>
 #include <ArduinoJson.h>
 
 class AnalogSensor
 {
     public:
+        AnalogSensor()
+        {
+
+        }
         AnalogSensor(JsonObject json)
         {
-            mPin = json["pin"];
-            mName = json["name"];
+            loadFromJson(json);
+        }
+        void loadFromJson(JsonObject json)
+        {
+            mPin = json["pin"].as<int>();
+            mName = json["name"].as<String>();
         }
         virtual float readValue()
         {
@@ -22,14 +31,14 @@ class AnalogSensor
         {
             return mPin;
         }
-        String* getName()
+        String getName()
         {
             return mName;
         }
 
     private:
         int mPin;
-        String * mName;
+        String mName;
 };
 
 #endif /* ANALOG_SENSOR_H */
