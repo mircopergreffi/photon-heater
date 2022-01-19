@@ -7,7 +7,7 @@
 #include "Heater.h"
 #include "Fan.h"
 #include "NTCSensor.h"
-#include "TemperatureHistory.h"
+#include "History.h"
 
 AsyncWebServer server(80);
 
@@ -16,7 +16,7 @@ Fan fan;
 NTCSensor sensorHeater;
 NTCSensor sensorAir;
 const char * sensorNames[] = {"Heater","Air"};
-TemperatureHistory<60, 2> temperatureHistory(sensorNames);
+History<60, 2> history(sensorNames);
 
 float heaterPower, setpointTemp, heaterTemp, airTemp;
 PID controller(heaterTemp, heaterPower, setpointTemp, 0.0, 0.0, 0.0, DIRECT);
@@ -120,7 +120,7 @@ void setup() {
 			fromTimestamp = request->getParam("timestamp")->value().toInt();
 		}
 		AsyncResponseStream * response = request->beginResponseStream("application/json");
-		serializeJson(temperatureHistory.getJson(fromTimestamp), *response);
+		serializeJson(history.getJson(fromTimestamp), *response);
 		request->send(response);
 	});
 	
@@ -135,6 +135,6 @@ void loop() {
 	float airTemp = sensorAir.readValue();
 
 	float values[] = {heaterTemp, airTemp};
-	temperatureHistory.push(values);
+	history.push(values);
 	delay(1000);
 }

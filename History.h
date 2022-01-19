@@ -1,25 +1,25 @@
 
-#ifndef TEMPERATURE_HISTORY_H
-#define TEMPERATURE_HISTORY_H
+#ifndef HISTORY_H
+#define HISTORY_H
 
 #include <String.h>
 #include <ArduinoJson.h>
 
-template<unsigned int size, unsigned int sensors>
-class TemperatureHistory
+template<unsigned int size, unsigned int entries>
+class History
 {
 	public:
-		TemperatureHistory(const char * names[sensors])
+		History(const char * names[entries])
 		{
-			for (int i=0; i<sensors; i++)
+			for (int i=0; i<entries; i++)
 				mNames[i] = names[i];
 		}
 
-		void push(float values[sensors])
+		void push(float values[entries])
 		{
 			while(wait);
 			mTimestamps[mEnd] = millis();
-			for (int i=0; i<sensors; i++)
+			for (int i=0; i<entries; i++)
 			{
 				mValues[mEnd][i] = values[i];
 			}
@@ -46,7 +46,7 @@ class TemperatureHistory
 				if (mTimestamps[i] > fromTimestamp)
 				{
 					doc["timestamps"][j] = mTimestamps[i];
-					for (int k=0; k<sensors; k++)
+					for (int k=0; k<entries; k++)
 					{
 						doc[mNames[k]][j] = mValues[i][k];
 					}
@@ -62,9 +62,9 @@ class TemperatureHistory
 	private:
 		bool wait = false;
 		unsigned int mStart = 0, mEnd = 0;
-		const char * mNames[sensors];
+		const char * mNames[entries];
 		unsigned long mTimestamps[size];
-		float mValues[size][sensors];
+		float mValues[size][entries];
 };
 
-#endif /* TEMPERATURE_HISTORY_H */
+#endif /* HISTORY_H */
