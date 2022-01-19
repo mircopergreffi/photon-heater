@@ -1,57 +1,65 @@
 {
-	"wifi_ssid": "TIM-25786986",
-	"wifi_password": "wR4@SNR6jhnz",
-
-	"heater_pin": "",
-	"heater_temp_max": 60,
-	"heater_temp_min": 0,
-	"heater_temp_critical": 80,
-	"heater_power_max": 1.0,
-	"heater_duty_cycle_max": 0.95,
-	"heater_duty_cycle_min": 0.05,
-	"heater_sensor": 
+	"wifi":
 	{
-		"name": "Heater",
-		"type": "ntc",
-		"B": 3950,
-		"T0": 298.15,
-		"R0": 100000,
-		"pullup": 47000,
-		"pin": ""
-	},
-	
-	"fan_pin": "",
-	"fan_speed_max": 1.0,
-	"fan_speed_min": 0.4,
-	"fan_duty_cycle_max": 0.95,
-	"fan_duty_cycle_min": 0.05,
-	
-	"ambient_temp_max": 30,
-	"ambient_temp_min": 25,
-	"ambient_sensor": 
-	{
-		"name": "Ambient",
-		"type": "ntc",
-		"B": 3950,
-		"T0": 298.15,
-		"R0": 100000,
-		"pullup": 47000,
-		"pin": ""
+		"ssid": "TIM-25786986",
+		"password": "wR4@SNR6jhnz"
 	},
 
-	"sensors_extra":
-	[
+	"heater":
+	{
+		"pin": "",
+		"temp_max": 60,
+		"temp_min": 0,
+		"temp_critical": 80,
+		"power_max": 1.0,
+		"sensor": 
 		{
-			"name": "Resin",
+			"name": "Heater",
 			"type": "ntc",
 			"B": 3950,
-			"T0": 298.15,
+			"T0": 25,
 			"R0": 100000,
 			"pullup": 47000,
 			"pin": ""
 		}
-	],
+	},
 
-	"control_type": "pid",
-	"control_pid": [1.0, 0.0, 0.0]
+	"fan":
+	{
+		"pin": "",
+		"speed_max": 1.0,
+		"speed_min": 0.4
+	},
+	
+	"air_temp_max": 30,
+	"air_temp_min": 25,
+	"air_sensor": 
+	{
+		"name": "Air",
+		"type": "ntc",
+		"B": 3950,
+		"T0": 25,
+		"R0": 100000,
+		"pullup": 47000,
+		"pin": ""
+	},
+
+	"resin_sensor":
+	{
+		"name": "Resin",
+		"type": "ntc",
+		"B": 3950,
+		"T0": 25,
+		"R0": 100000,
+		"pullup": 47000,
+		"pin": ""
+	},
+
+	"control":
+	{
+		"type": "pid",
+		"p": 1.0,
+		"i": 0.0,
+		"d": 0.0
+	}
 }
