@@ -9,16 +9,20 @@ template<unsigned int size, unsigned int sensors>
 class TemperatureHistory
 {
 	public:
-		TemperatureHistory(String names[sensors])
+		TemperatureHistory(const char * names[sensors])
 		{
-			for (int i=0; i++; i<sensors)
+			for (int i=0; i<sensors; i++)
 				mNames[i] = names[i];
 		}
 
 		void push(float values[sensors])
 		{
+			while(wait);
 			mTimestamps[mEnd] = millis();
-			mValues[mEnd] = sensors;
+			for (int i=0; i<sensors; i++)
+			{
+				mValues[mEnd][i] = values[i];
+			}
 			mEnd++;
 			if (mEnd >= size)
 				mEnd = 0;
@@ -30,6 +34,7 @@ class TemperatureHistory
 
 		StaticJsonDocument<1024> getJson(unsigned long fromTimestamp)
 		{
+			wait = true;
 			StaticJsonDocument<1024> doc;
 			unsigned int i = mStart;
 			size_t j = 0;
@@ -38,21 +43,26 @@ class TemperatureHistory
 				if (i >= size)
 					i = 0;
 
-				if (fromTimestamp > mTimestamps[i])
-					continue;
-
-				doc["timestamps"][j] = mTimestamps[i];
-				for (unsigned int k=0; k++; sensors)
+				if (mTimestamps[i] > fromTimestamp)
 				{
-					doc[mNames[k]][j] = mValues[k][i];
+					doc["timestamps"][j] = mTimestamps[i];
+					for (int k=0; k<sensors; k++)
+					{
+						doc[mNames[k]][j] = mValues[i][k];
+					}
+					j++;
 				}
+
+				i++;
 			}
+			wait = false;
 			return doc;
 		}
 		
 	private:
+		bool wait = false;
 		unsigned int mStart = 0, mEnd = 0;
-		String mNames[sensors];
+		const char * mNames[sensors];
 		unsigned long mTimestamps[size];
 		float mValues[size][sensors];
 };
