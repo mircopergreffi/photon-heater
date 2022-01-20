@@ -23,6 +23,7 @@ class ResistorSensor : public AnalogSensor
 		void loadFromJson(JsonObject json)
 		{
 			mPullUp = json["pullup"];
+			AnalogSensor::loadFromJson(json);
 		}
 		float readValue()
 		{
