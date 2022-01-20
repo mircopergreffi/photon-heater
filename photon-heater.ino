@@ -21,7 +21,7 @@ History<60, 3> history(sensorNames);
 
 double heaterPower, setpointTemp = 0, heaterTemp, airTemp;
 double fanManualSpeed, fanMode = 0; // 0: auto, 1: manual
-PID controller(heaterTemp, heaterPower, setpointTemp, 0.0, 0.0, 0.0, DIRECT);
+PID controller(&heaterTemp, &heaterPower, &setpointTemp, 0.0, 0.0, 0.0, P_ON_E, DIRECT);
 
 bool loadFromJson(StaticJsonDocument<2048> &doc)
 {
