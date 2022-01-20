@@ -32,10 +32,10 @@ class History
 				mStart = 0;
 		}
 
-		StaticJsonDocument<1024> getJson(unsigned long fromTimestamp)
+		StaticJsonDocument<12288> getJson(unsigned long fromTimestamp)
 		{
 			wait = true;
-			StaticJsonDocument<1024> doc;
+			StaticJsonDocument<12288> doc;
 			unsigned int i = mStart;
 			size_t j = 0;
 			while (i != mEnd)
