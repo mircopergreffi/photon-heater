@@ -2,7 +2,8 @@
 	"wifi":
 	{
 		"ssid": "TIM-25786986",
-		"password": "wR4@SNR6jhnz"
+		"password": "wR4@SNR6jhnz",
+		"hostname": "tipregostampa"
 	},
 
 	"heater":
