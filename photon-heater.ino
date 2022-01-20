@@ -3,6 +3,7 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
+#include <PID_v1.h>
 
 #include "Heater.h"
 #include "Fan.h"
@@ -15,11 +16,11 @@ Heater heater;
 Fan fan;
 NTCSensor sensorHeater;
 NTCSensor sensorAir;
-const char * sensorNames[] = {"Heater","Air"};
-History<60, 2> history(sensorNames);
+const char * sensorNames[] = {"Heater","Air","Fan"};
+History<60, 3> history(sensorNames);
 
-float heaterPower, setpointTemp, heaterTemp, airTemp;
-float fanManualSpeed, fanMode = 0 /* 0: auto, 1: manual */;
+double heaterPower, setpointTemp = 0, heaterTemp, airTemp;
+double fanManualSpeed, fanMode = 0; // 0: auto, 1: manual
 PID controller(heaterTemp, heaterPower, setpointTemp, 0.0, 0.0, 0.0, DIRECT);
 
 bool loadFromJson(StaticJsonDocument<2048> &doc)
@@ -31,6 +32,7 @@ bool loadFromJson(StaticJsonDocument<2048> &doc)
 	controller.SetTunings(doc["control"]["p"].as<float>(), doc["control"]["i"].as<float>(), doc["control"]["d"].as<float>());
 	controller.SetOutputLimits(0.0, 1.0);
 	controller.SetSampleTime(1000);
+	controller.SetMode(AUTOMATIC);
 	return true;
 }
 
@@ -127,7 +129,19 @@ void setup() {
 
 	server.on("/set", HTTP_GET, [](AsyncWebServerRequest* request){
 		if (request->hasParam("fanSpeed"))
-			
+			fanManualSpeed = request->getParam("fanSpeed")->value().toFloat();
+		if (request->hasParam("fanMode"))
+		{
+			String mode = request->getParam("fanMode")->value();
+			if (mode.compareTo("auto"))
+				fanMode = 0;
+			else if (mode.compareTo("manual"))
+				fanMode = 1;
+			else
+				request->send(400, "invalid fan mode");
+		}
+		if (request->hasParam("temperature"))
+			setpointTemp = request->getParam("temperature")->value().toFloat();
 		request->send(200);
 	});
 	
@@ -145,13 +159,18 @@ void loop() {
 	{
 		if (heaterTemp - airTemp >= 5)
 			fan.setSpeed(1.0);
+		else
+			fan.setSpeed(0.0);
 	}
 	else
 	{
 		fan.setSpeed(fanManualSpeed);
-	}		
+	}
 
-	float values[] = {heaterTemp, airTemp};
+	controller.Compute();
+	heater.setPower(heaterPower);
+
+	float values[] = {heaterTemp, airTemp, fan.getSpeed()};
 	history.push(values);
 	delay(1000);
 }
