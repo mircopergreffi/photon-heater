@@ -159,6 +159,16 @@ void setup() {
 		}
 		request->send(400, "plain/text", "nothing-set");
 	});
+
+	server.on("/get", HTTP_GET, [](AsyncWebServerRequest* request){
+		AsyncResponseStream* response = request->beginResponseStream("application/json");
+		StaticJsonDocument<256> doc;
+		doc["fan"]["speed"] = fanManualSpeed;
+		doc["fan"]["mode"] = fanMode == 0 ? "auto" : "manual";
+		doc["temperature"] = setpointTemp;
+		serializeJson(doc, *response);
+		request->send(response);
+	});
 	
 	server.serveStatic("/", SPIFFS, "/");
 
