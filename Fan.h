@@ -38,6 +38,10 @@ class Fan
 				ledcWrite(PWM_Fan_Ch, mSpeed*PWM_Fan_Max);
 			}
 		}
+		float getSpeed()
+		{
+			return mSpeed;
+		}
 	private:
 		void setup()
 		{
