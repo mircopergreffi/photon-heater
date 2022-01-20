@@ -19,6 +19,7 @@ const char * sensorNames[] = {"Heater","Air"};
 History<60, 2> history(sensorNames);
 
 float heaterPower, setpointTemp, heaterTemp, airTemp;
+float fanManualSpeed, fanMode = 0 /* 0: auto, 1: manual */;
 PID controller(heaterTemp, heaterPower, setpointTemp, 0.0, 0.0, 0.0, DIRECT);
 
 bool loadFromJson(StaticJsonDocument<2048> &doc)
@@ -110,18 +111,24 @@ void setup() {
 	}
 	
 	// Route for root / web page
-	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest* request){
 		request->send(SPIFFS, "/index.html");
 	});
 
-	server.on("/history.json", HTTP_GET, [](AsyncWebServerRequest *request){
+	server.on("/history.json", HTTP_GET, [](AsyncWebServerRequest* request){
 		unsigned long fromTimestamp = 0;
 		if (request->hasParam("timestamp")){
 			fromTimestamp = request->getParam("timestamp")->value().toInt();
 		}
-		AsyncResponseStream * response = request->beginResponseStream("application/json");
+		AsyncResponseStream* response = request->beginResponseStream("application/json");
 		serializeJson(history.getJson(fromTimestamp), *response);
 		request->send(response);
+	});
+
+	server.on("/set", HTTP_GET, [](AsyncWebServerRequest* request){
+		if (request->hasParam("fanSpeed"))
+			
+		request->send(200);
 	});
 	
 	server.serveStatic("/", SPIFFS, "/");
@@ -133,6 +140,16 @@ void setup() {
 void loop() {
 	float heaterTemp = sensorHeater.readValue();
 	float airTemp = sensorAir.readValue();
+
+	if (fanMode == 0)
+	{
+		if (heaterTemp - airTemp >= 5)
+			fan.setSpeed(1.0);
+	}
+	else
+	{
+		fan.setSpeed(fanManualSpeed);
+	}		
 
 	float values[] = {heaterTemp, airTemp};
 	history.push(values);
