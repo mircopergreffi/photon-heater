@@ -31,15 +31,12 @@ class Fan
 		}
 		void setSpeed(float speed)
 		{
-			if (speed >= mMaxSpeed)
-				speed = mMaxSpeed;
-			if (speed >= mMinSpeed && speed > 0)
-				speed = mMinSpeed;
-			if (speed < PWM_Fan_Duty_Cycle_Min)
-				speed = 0;
-			else if (speed > PWM_Fan_Duty_Cycle_Max)
-				speed = 1;
-			ledcWrite(PWM_Fan_Ch, speed*PWM_Fan_Max);
+			speed = purgeSpeed(speed);
+			if (speed != mSpeed)
+			{
+				mSpeed = speed;
+				ledcWrite(PWM_Fan_Ch, mSpeed*PWM_Fan_Max);
+			}
 		}
 	private:
 		void setup()
@@ -48,8 +45,20 @@ class Fan
 			ledcSetup(PWM_Fan_Ch, PWM_Fan_Freq, PWM_Fan_Rs);
 			ledcWrite(PWM_Fan_Ch, 0);
 		}
+		float purgeSpeed(float speed)
+		{
+			if (speed >= mMaxSpeed)
+				speed = mMaxSpeed;
+			if (speed >= mMinSpeed && speed > 0)
+				speed = mMinSpeed;
+			if (speed < PWM_Fan_Duty_Cycle_Min)
+				speed = 0;
+			else if (speed > PWM_Fan_Duty_Cycle_Max)
+				speed = 1;
+			return speed;
+		}
 		int mPin;
-		float mMaxSpeed, mMinSpeed;
+		float mSpeed = 0, mMaxSpeed, mMinSpeed;
 };
 
 #endif /* FAN_H */
