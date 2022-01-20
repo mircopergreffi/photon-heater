@@ -45,6 +45,10 @@ bool connectToWiFi(StaticJsonDocument<2048> &doc)
 		if (WiFi.SSID().compareTo(ssid) == 0)
 			return true;
 
+	const char * hostname = doc["wifi"]["hostname"];
+	WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
+	WiFi.setHostname(hostname);
+	
 	const char * pass = doc["wifi"]["password"];
 
 	WiFi.begin(ssid, pass);
@@ -129,7 +133,11 @@ void setup() {
 
 	server.on("/set", HTTP_GET, [](AsyncWebServerRequest* request){
 		if (request->hasParam("fanSpeed"))
+		{
 			fanManualSpeed = request->getParam("fanSpeed")->value().toFloat();
+			request->send(200, "plain/text", "speed-set");
+			return;
+		}
 		if (request->hasParam("fanMode"))
 		{
 			String mode = request->getParam("fanMode")->value();
@@ -138,11 +146,18 @@ void setup() {
 			else if (mode.compareTo("manual"))
 				fanMode = 1;
 			else
-				request->send(400, "invalid fan mode");
+			{
+				request->send(400, "plain/text", "invalid-fan-mode");
+			}
+			request->send(200, "plain/text", "mode-set");
+			return;
 		}
 		if (request->hasParam("temperature"))
+		{
 			setpointTemp = request->getParam("temperature")->value().toFloat();
-		request->send(200);
+			request->send(200, "plain/text", "temperature-set");
+		}
+		request->send(400, "plain/text", "nothing-set");
 	});
 	
 	server.serveStatic("/", SPIFFS, "/");
