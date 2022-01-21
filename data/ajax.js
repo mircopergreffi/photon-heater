@@ -103,7 +103,7 @@ function minAjax(config) {
     sendString = sendString.join('&');
 
     if (config.type == "GET") {
-        xmlhttp.open("GET", config.url + "?" + sendString, config.method);
+        xmlhttp.open("GET", config.url + (sendString ? "?" : "") + sendString, config.method);
         xmlhttp.send();
 
         if (config.debugLog == true)
