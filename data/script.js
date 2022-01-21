@@ -194,12 +194,14 @@ const configs = {
 
 const configFormContainer = document.getElementById("config-form").getElementsByClassName("config-inputs")[0]
 
-function formSection(name, section)
+function formSection(name, section, fieldset=true)
 {
-    const container = document.createElement("div")
-    const content = document.createElement("div")
-    content.classList.add("pl-4")
-    const title = document.createElement("h4")
+    let container = null
+    if(fieldset) container = document.createElement("fieldset")
+    else container = document.createElement("div")
+    
+    container.classList.add("mb-4")
+    const title = document.createElement("legend")
     title.textContent = name
     container.appendChild(title)
     for(const item in section)
@@ -214,9 +216,8 @@ function formSection(name, section)
         {
             child = formItem(item, current)
         }
-        content.appendChild(child)
+        container.appendChild(child)
     }
-    container.appendChild(content)
     return container
 }
 
@@ -239,7 +240,7 @@ function formItem(name, value)
 function populateForm(configs)
 {
     configFormContainer.innerHTML = ""
-    configFormContainer.appendChild(formSection("", configs))
+    configFormContainer.appendChild(formSection("", configs, false))
 }
 
 function updateMaxMin(configs)
@@ -265,8 +266,6 @@ function updateGraph(configs)
     myChart.options.plugins.annotation.annotations.criticalLine.yMax = configs.heater.temp_critical
     myChart.options.scales.y.suggestedMax = configs.heater.temp_max
     myChart.options.scales.y.suggestedMin = configs.heater.temp_min
-    // myChart.options.annotation.annotations[0].value = val
-    // myChart.options.annotation.annotations[0].label.content += " "+ val + "%"
     myChart.update()
 }
 
@@ -276,6 +275,8 @@ function loadConfigs(configs)
     updateMaxMin(configs)
     updateGraph(configs)
 }
+
+// loadConfigs(configs)
 
 minAjax({
     url:"/get",
@@ -287,8 +288,6 @@ minAjax({
         temperature.value = data.temperature
     }
 })
-
-// loadConfigs(configs)
 
 minAjax({
     url:"/config.json",
@@ -323,4 +322,37 @@ setInterval(() =>
             myChart.update()
         }
     })
-}, 2000)
+}, 1000)
+function populateObject(obj, element)
+{
+    if(element)
+    {
+        Array.from(element.children).forEach(e =>
+            {
+                if(e.tagName == "FIELDSET")
+                {
+                    const newObject = {}
+                    obj[e.getElementsByTagName("legend")[0].textContent] = newObject
+                    populateObject(newObject, e)
+                }
+                else if (e.tagName == "DIV")
+                {
+                    obj[e.getElementsByTagName("label")[0].textContent] = e.getElementsByTagName("input")[0].value
+                }
+            })
+    }
+}
+document.getElementById("save-config").addEventListener("click", (e) =>
+{
+    const object = {}
+    populateObject(object, configFormContainer.children[0])
+    const json = JSON.stringify(object)
+    
+    minAjax({
+        url:"/config.json",
+        type:"POST",
+        data: json,
+        success: function(data){
+        }
+    })
+})

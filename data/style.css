@@ -104,7 +104,7 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-input[type=submit] {
+button[type=button] {
     background-color: var(--primary);
     color: white;
     padding: 16px 32px;
@@ -114,7 +114,7 @@ input[type=submit] {
     display: block;
 }
 
-input[type=submit]:hover {
+button[type=button]:hover {
     opacity: 0.8;
     cursor: pointer;
 }
