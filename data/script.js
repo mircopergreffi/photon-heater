@@ -314,4 +314,4 @@ setInterval(() =>
             myChart.update()
         }
     })
-}, 5000)
+}, 1000)
