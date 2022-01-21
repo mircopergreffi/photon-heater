@@ -259,6 +259,17 @@ function loadConfigs(configs)
     updateGraph(configs)
 }
 
+minAjax({
+    url:"/get",
+    type:"GET",
+    success: function(data){
+        data = JSON.parse(data)
+        fanModeAuto.value = data.fan.mode == "auto"
+        fanSpeed.value = data.fan.speed
+        temperature.value = data.temperature
+    }
+})
+
 // loadConfigs(configs)
 
 minAjax({
