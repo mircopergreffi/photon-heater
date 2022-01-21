@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "mutex": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
