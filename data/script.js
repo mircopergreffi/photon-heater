@@ -289,13 +289,13 @@ setInterval(() =>
         type:"GET",
         success: function(data){
             data = JSON.parse(data)
-            const temperatures = data.timestamps.map((t,i) =>
+            const temperatures = data.Heater.map((t,i) =>
             {
-                return {x: data.Heater[i], y: t}
+                return {x: data.timestamps[i], y: t}
             })
-            const fans = data.timestamps.map((f,i) =>
+            const fans = data.Fan.map((f,i) =>
             {
-                return {x: data.Fan[i], y: f}
+                return {x: data.timestamps[i], y: f}
             })
             myChart.data.datasets[0].data = temperatures
             myChart.data.datasets[1].data = fans
