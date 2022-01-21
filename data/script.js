@@ -1,20 +1,22 @@
 const graphConfig = {
     type: 'scatter',
     data: {
-        datasets: [{
+        datasets: [
+            {
             label: "Temperature",
             borderColor: "#e02900",
             backgroundColor: "#e0290066",
             showLine: true,
             data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
-        }],
-        datasets: [{
-            label: "Fan",
-            borderColor: "#0377fc",
-            backgroundColor: "#0377fc",
-            showLine: true,
-            data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
-        }],
+            },
+            {
+                label: "Fan",
+                borderColor: "#0377fc",
+                backgroundColor: "#0377fc",
+                showLine: true,
+                data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
+            }
+        ],
     },
     options: {
         scales: {
