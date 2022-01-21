@@ -17,7 +17,7 @@ Fan fan;
 NTCSensor sensorHeater;
 NTCSensor sensorAir;
 const char * sensorNames[] = {"Heater","Air","Fan"};
-History<60, 3> history(sensorNames);
+History<30, 3> history(sensorNames);
 
 double heaterPower, setpointTemp = 0, heaterTemp, airTemp;
 double fanManualSpeed, fanMode = 0; // 0: auto, 1: manual
