@@ -3,11 +3,18 @@ const graphConfig = {
     data: {
         datasets: [
             {
-            label: "Temperature",
-            borderColor: "#e02900",
-            backgroundColor: "#e0290066",
-            showLine: true,
-            data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
+                label: "Heater",
+                borderColor: "#e02900",
+                backgroundColor: "#e0290066",
+                showLine: true,
+                data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
+            },
+            {
+                label: "Air",
+                borderColor: "#a832a8",
+                backgroundColor: "#a832a8",
+                showLine: true,
+                data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
             },
             {
                 label: "Fan",
@@ -74,7 +81,7 @@ temperature.addEventListener("change", e =>
             }
         })
 })
-temperature.addEventListener("change", e =>
+fanSpeed.addEventListener("change", e =>
 {
     minAjax({
             url:"/set?fanSpeed=" + e.target.value,
@@ -289,16 +296,21 @@ setInterval(() =>
         type:"GET",
         success: function(data){
             data = JSON.parse(data)
-            const temperatures = data.Heater.map((t,i) =>
+            const heater = data.Heater.map((t,i) =>
             {
                 return {x: data.timestamps[i], y: t}
             })
+            const air = data.Air.map((a,i) =>
+            {
+                return {x: data.timestamps[i], y: a}
+            })
             const fans = data.Fan.map((f,i) =>
             {
-                return {x: data.timestamps[i], y: f}
+                return {x: data.timestamps[i], y: f*100}
             })
-            myChart.data.datasets[0].data = temperatures
-            myChart.data.datasets[1].data = fans
+            myChart.data.datasets[0].data = heater
+            myChart.data.datasets[1].data = air
+            myChart.data.datasets[2].data = fans
             myChart.update()
         }
     })
