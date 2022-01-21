@@ -12,6 +12,10 @@
 
 AsyncWebServer server(80);
 
+bool configChanged = false;
+
+File file;
+
 Heater heater;
 Fan fan;
 NTCSensor sensorHeater;
@@ -22,6 +26,8 @@ History<30, 3> history(sensorNames);
 double heaterPower, setpointTemp = 0, heaterTemp, airTemp;
 double fanManualSpeed, fanMode = 0; // 0: auto, 1: manual
 PID controller(&heaterTemp, &heaterPower, &setpointTemp, 0.0, 0.0, 0.0, P_ON_E, DIRECT);
+
+// StaticJsonDocument<256> historyDoc;
 
 bool loadFromJson(StaticJsonDocument<2048> &doc)
 {
@@ -63,6 +69,11 @@ bool connectToWiFi(StaticJsonDocument<2048> &doc)
 	return true;
 }
 
+bool checkForUpdates(StaticJsonDocument<2048> &doc)
+{
+	return true;
+}
+
 bool readConfigFile()
 {
 	StaticJsonDocument<2048> doc;
@@ -93,6 +104,8 @@ bool readConfigFile()
 	if (!loadFromJson(doc))
 		return false;
 	if (!connectToWiFi(doc))
+		return false;
+	if (!checkForUpdates(doc))
 		return false;
 
 	file.close();
@@ -129,12 +142,42 @@ void setup() {
 		AsyncResponseStream* response = request->beginResponseStream("application/json");
 		serializeJson(history.getJson(fromTimestamp), *response);
 		request->send(response);
+
+		// AsyncResponseStream* response = request->beginResponseStream("application/json");
+		// serializeJson(historyDoc, *response);
+		// request->send(response);
+	});
+
+	server.onRequestBody([](AsyncWebServerRequest* request, uint8_t *data, size_t len, size_t index, size_t total){
+		if (request->url() == "/config.json")
+		{
+			if (!index)
+			{
+				file = SPIFFS.open("/config.json", FILE_WRITE);
+				if (!file)
+				{
+					Serial.println("Error opening file config.json");
+					request->send(500, "Error opening file config.json");
+				}
+			}
+			for (size_t i = 0; i<len; i++)
+			{
+				file.write(data[i]);
+			}
+			if (index + len == total)
+			{
+				configChanged = true;
+				file.close();
+			}
+		}
 	});
 
 	server.on("/set", HTTP_GET, [](AsyncWebServerRequest* request){
 		if (request->hasParam("fanSpeed"))
 		{
 			fanManualSpeed = request->getParam("fanSpeed")->value().toFloat();
+			Serial.print("Manual Fan Speed set to: ");
+			Serial.println(fanManualSpeed);
 			request->send(200, "plain/text", "speed-set");
 			return;
 		}
@@ -149,12 +192,16 @@ void setup() {
 			{
 				request->send(400, "plain/text", "invalid-fan-mode");
 			}
+			Serial.print("Fan mode set to: ");
+			Serial.println(mode);
 			request->send(200, "plain/text", "mode-set");
 			return;
 		}
 		if (request->hasParam("temperature"))
 		{
 			setpointTemp = request->getParam("temperature")->value().toFloat();
+			Serial.print("Temperature set to: ");
+			Serial.println(setpointTemp);
 			request->send(200, "plain/text", "temperature-set");
 		}
 		request->send(400, "plain/text", "nothing-set");
@@ -177,6 +224,12 @@ void setup() {
 }
 
 void loop() {
+	if (configChanged)
+	{
+		readConfigFile();
+		configChanged = false;
+	}
+
 	float heaterTemp = sensorHeater.readValue();
 	float airTemp = sensorAir.readValue();
 
@@ -197,5 +250,12 @@ void loop() {
 
 	float values[] = {heaterTemp, airTemp, fan.getSpeed()};
 	history.push(values);
+
+	
+	// historyDoc["timestamps"][0] = millis();
+	// historyDoc["Heater"][0] = heaterTemp;
+	// historyDoc["Air"][0] = airTemp;
+	// historyDoc["Fan"][0] = fan.getSpeed();
+	
 	delay(1000);
 }
