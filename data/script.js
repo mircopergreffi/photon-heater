@@ -74,7 +74,7 @@ temperature.addEventListener("change", e =>
             }
         })
 })
-temperature.addEventListener("change", e =>
+fanSpeed.addEventListener("change", e =>
 {
     minAjax({
             url:"/set?fanSpeed=" + e.target.value,
