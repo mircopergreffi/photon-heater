@@ -66,8 +66,11 @@ fanModeAuto.addEventListener("change", e =>
 {
     const mode = e.target.checked ? "auto" : "manual"
     minAjax({
-            url:"/set?fanMode=" + mode,
+            url:"/set",
             type:"GET",
+            data:{
+                fanMode:mode,
+            },
             success: function(data){
             }
         })
@@ -75,8 +78,11 @@ fanModeAuto.addEventListener("change", e =>
 temperature.addEventListener("change", e =>
 {
     minAjax({
-            url:"/set?temperature=" + e.target.value,
+            url:"/set",
             type:"GET",
+            data:{
+                temperature: e.target.value,
+            },
             success: function(data){
             }
         })
@@ -84,8 +90,11 @@ temperature.addEventListener("change", e =>
 fanSpeed.addEventListener("change", e =>
 {
     minAjax({
-            url:"/set?fanSpeed=" + e.target.value,
+            url:"/set",
             type:"GET",
+            data:{
+                fanSpeed: e.target.value,
+            },
             success: function(data){
             }
         })
