@@ -259,7 +259,7 @@ function loadConfigs(configs)
     updateGraph(configs)
 }
 
-loadConfigs(configs)
+// loadConfigs(configs)
 
 minAjax({
     url:"/config.json",
