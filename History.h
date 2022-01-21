@@ -5,6 +5,8 @@
 #include <String.h>
 #include <ArduinoJson.h>
 
+volatile bool lock0 = false, lock1 = false;
+
 template<unsigned int size, unsigned int entries>
 class History
 {
@@ -17,9 +19,8 @@ class History
 
 		void push(float values[entries])
 		{
-			if (wait)
-				Serial.println("waiting");
-			while(wait);
+			while(lock1);
+			lock0 = true;
 			mTimestamps[mEnd] = millis();
 			for (int i=0; i<entries; i++)
 			{
@@ -32,16 +33,20 @@ class History
 				mStart++;
 			if (mStart >= size)
 				mStart = 0;
+			lock0 = false;
 		}
 
 		StaticJsonDocument<12288> getJson(unsigned long fromTimestamp)
 		{
-			wait = true;
+			// while(lock0);
+			lock1 = true;
 			StaticJsonDocument<12288> doc;
-			unsigned int i = mStart;
+			unsigned int i = mStart, end = mEnd;
 			size_t j = 0;
-			while (i != mEnd)
+			while (i != end)
 			{
+				if (lock0)
+					break;
 				if (i >= size)
 					i = 0;
 
@@ -57,16 +62,15 @@ class History
 
 				i++;
 			}
-			wait = false;
+			lock1 = false;
 			return doc;
 		}
 		
 	private:
-		volatile bool wait = false;
-		unsigned int mStart = 0, mEnd = 0;
+		volatile unsigned int mStart = 0, mEnd = 0;
 		const char * mNames[entries];
-		unsigned long mTimestamps[size];
-		float mValues[size][entries];
+		volatile unsigned long mTimestamps[size];
+		volatile float mValues[size][entries];
 };
 
 #endif /* HISTORY_H */
