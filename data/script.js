@@ -19,8 +19,8 @@ const graphConfig = {
     options: {
         scales: {
             y: {
-                beginAtZero: true,
                 suggestedMax: 100,
+                suggestedMin: 0,
             },
         },
         responsive: true,
@@ -50,8 +50,37 @@ const graphConfig = {
 const ctx = document.getElementById("temperatureChart")
 const myChart = new Chart(ctx, graphConfig)
 
+const fanModeAuto = document.getElementById("fan-mode-auto")
 const fanSpeed = document.getElementById("speed")
 const temperature = document.getElementById("temperature")
+fanModeAuto.addEventListener("change", e =>
+{
+    const mode = e.target.checked ? "auto" : "manual"
+    minAjax({
+            url:"/set?fanMode=" + mode,
+            type:"GET",
+            success: function(data){
+            }
+        })
+})
+temperature.addEventListener("change", e =>
+{
+    minAjax({
+            url:"/set?temperature=" + e.target.value,
+            type:"GET",
+            success: function(data){
+            }
+        })
+})
+temperature.addEventListener("change", e =>
+{
+    minAjax({
+            url:"/set?fanSpeed=" + e.target.value,
+            type:"GET",
+            success: function(data){
+            }
+        })
+})
 const sliders = Array.from(document.getElementsByClassName("range-slidecontainer"))
 
 sliders.forEach(s =>
@@ -232,32 +261,32 @@ function loadConfigs(configs)
 
 loadConfigs(configs)
 
-// minAjax({
-//     url:"/config.json",
-//     type:"GET",
-//     success: function(data){
-//         loadConfigs(JSON.parse(data))
-//     }
-// })
+minAjax({
+    url:"/config.json",
+    type:"GET",
+    success: function(data){
+        loadConfigs(JSON.parse(data))
+    }
+})
 
-// setInterval(() =>
-// {
-//     minAjax({
-//         url:"/history.json",
-//         type:"GET",
-//         success: function(data){
-//             data = JSON.parse(data)
-//             const temperatures = data.timestamps.map((t,i) =>
-//             {
-//                 return {x: data.Heater[i], y: t}
-//             })
-//             const fans = data.timestamps.map((f,i) =>
-//             {
-//                 return {x: data.Fan[i], y: f}
-//             })
-//             myChart.data.datasets[0].data = temperatures
-//             myChart.data.datasets[1].data = fans
-//             myChart.update()
-//         }
-//     })
-// }, 1000)
+setInterval(() =>
+{
+    minAjax({
+        url:"/history.json",
+        type:"GET",
+        success: function(data){
+            data = JSON.parse(data)
+            const temperatures = data.timestamps.map((t,i) =>
+            {
+                return {x: data.Heater[i], y: t}
+            })
+            const fans = data.timestamps.map((f,i) =>
+            {
+                return {x: data.Fan[i], y: f}
+            })
+            myChart.data.datasets[0].data = temperatures
+            myChart.data.datasets[1].data = fans
+            myChart.update()
+        }
+    })
+}, 1000)
