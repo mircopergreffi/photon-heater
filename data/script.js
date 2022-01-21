@@ -8,11 +8,19 @@ const graphConfig = {
             showLine: true,
             data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
         }],
+        datasets: [{
+            label: "Fan",
+            borderColor: "#0377fc",
+            backgroundColor: "#0377fc",
+            showLine: true,
+            data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
+        }],
     },
     options: {
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                suggestedMax: 100,
             },
         },
         responsive: true,
@@ -71,45 +79,120 @@ document.getElementById("fan-mode-auto").addEventListener('change', (e) =>
 })
 
 const configs = {
-    "heater_temp_max": 60,
-    "heater_temp_min": 0,
-    "heater_temp_critical": 80,
-    "heater_power_max": 1.0,
-    "heater_duty_cycle_max": 0.95,
-    "heater_duty_cycle_min": 0.05,
-    "heater_pid": [1.0, 0.0, 0.0],
-    
-    "fan_air_temp_max": 35,
-    "fan_air_temp_min": 0,
-    "fan_speed_max": 1.0,
-    "fan_speed_min": 0.4,
-    "fan_duty_cycle_max": 0.95,
-    "fan_duty_cycle_min": 0.05,
+	"wifi":
+	{
+		"ssid": "TIM-25786986",
+		"password": "wR4@SNR6jhnz",
+		"hostname": "tipregostampa"
+	},
 
-    "ambient_temp_max": 30,
-    "ambient_temp_min": 25,
-    "ambient_temp": 2,
+	"heater":
+	{
+		"pin": "17",
+		"temp_max": 60,
+		"temp_min": 0,
+		"temp_critical": 80,
+		"power_max": 1.0,
+		"sensor": 
+		{
+			"name": "Heater",
+			"type": "ntc",
+			"B": 3950,
+			"T0": 25,
+			"R0": 100000,
+			"pullup": 47000,
+			"pin": "34"
+		}
+	},
+
+	"fan":
+	{
+		"pin": "16",
+		"speed_max": 1.0,
+		"speed_min": 0.4
+	},
+	
+	"air_temp_max": 30,
+	"air_temp_min": 25,
+	"air_sensor": 
+	{
+		"name": "Air",
+		"type": "ntc",
+		"B": 3950,
+		"T0": 25,
+		"R0": 100000,
+		"pullup": 47000,
+		"pin": "35"
+	},
+
+	"resin_sensor":
+	{
+		"name": "Resin",
+		"type": "ntc",
+		"B": 3950,
+		"T0": 25,
+		"R0": 100000,
+		"pullup": 47000,
+		"pin": "27"
+	},
+
+	"control":
+	{
+		"type": "pid",
+		"p": 0.1,
+		"i": 0.0,
+		"d": 0.0
+	}
 }
 
 const configFormContainer = document.getElementById("config-form").getElementsByClassName("config-inputs")[0]
 
+function formSection(name, section)
+{
+    const container = document.createElement("div")
+    const content = document.createElement("div")
+    content.classList.add("pl-4")
+    const title = document.createElement("h4")
+    title.textContent = name
+    container.appendChild(title)
+    for(const item in section)
+    {
+        const current = section[item]
+        let child = null
+        if(typeof current == "object")
+        {
+            child = formSection(item, current)
+        }
+        else
+        {
+            child = formItem(item, current)
+        }
+        content.appendChild(child)
+    }
+    container.appendChild(content)
+    return container
+}
+
+function formItem(name, value)
+{
+    const container = document.createElement("div")
+    const label = document.createElement("label")
+    const input = document.createElement("input")
+    input.type = "text"
+    input.id = input.name = label.htmlFor = label.textContent = name
+    input.value = value
+    container.classList.add("mb-4")
+    label.classList.add("mr-8")
+    container.appendChild(label)
+    container.appendChild(input)
+
+    return container
+}
+
 function populateForm(configs)
 {
     configFormContainer.innerHTML = ""
-    for(const config in configs)
-    {
-        const container = document.createElement("div")
-        const label = document.createElement("label")
-        const input = document.createElement("input")
-        input.type = "text"
-        input.id = input.name = label.htmlFor = label.textContent = config
-        input.value = configs[config]
-        container.classList.add("mb-4")
-        label.classList.add("mr-8")
-        container.appendChild(label)
-        container.appendChild(input)
-        configFormContainer.appendChild(container)
-    }
+    configFormContainer.appendChild(formSection("", configs))
 }
 
 function updateMaxMin(configs)
@@ -125,22 +208,56 @@ function updateMaxMin(configs)
         e.dispatchEvent(new Event('input'))
     }
 
-    setRange(temperature, configs.heater_temp_max, configs.heater_temp_min)
-    setRange(fanSpeed, configs.fan_speed_max, configs.fan_speed_min)
+    setRange(temperature, configs.heater.temp_max, configs.heater.temp_min)
+    setRange(fanSpeed, configs.fan.speed_max, configs.fan.speed_min)
+}
+
+function updateGraph(configs)
+{
+    myChart.options.plugins.annotation.annotations.criticalLine.yMin = configs.heater.temp_critical
+    myChart.options.plugins.annotation.annotations.criticalLine.yMax = configs.heater.temp_critical
+    myChart.options.scales.y.suggestedMax = configs.heater.temp_max
+    myChart.options.scales.y.suggestedMin = configs.heater.temp_min
+    // myChart.options.annotation.annotations[0].value = val
+    // myChart.options.annotation.annotations[0].label.content += " "+ val + "%"
+    myChart.update()
 }
 
 function loadConfigs(configs)
 {
     populateForm(configs)
     updateMaxMin(configs)
+    updateGraph(configs)
 }
 
 loadConfigs(configs)
 
-/* minAjax({
-    url:"config.json",
-    type:"GET",
-    success: function(data){
-      console.log(data)
-    }
-}) */
+// minAjax({
+//     url:"/config.json",
+//     type:"GET",
+//     success: function(data){
+//         loadConfigs(JSON.parse(data))
+//     }
+// })
+
+// setInterval(() =>
+// {
+//     minAjax({
+//         url:"/history.json",
+//         type:"GET",
+//         success: function(data){
+//             data = JSON.parse(data)
+//             const temperatures = data.timestamps.map((t,i) =>
+//             {
+//                 return {x: data.Heater[i], y: t}
+//             })
+//             const fans = data.timestamps.map((f,i) =>
+//             {
+//                 return {x: data.Fan[i], y: f}
+//             })
+//             myChart.data.datasets[0].data = temperatures
+//             myChart.data.datasets[1].data = fans
+//             myChart.update()
+//         }
+//     })
+// }, 1000)
