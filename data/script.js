@@ -295,7 +295,7 @@ setInterval(() =>
             })
             const fans = data.Fan.map((f,i) =>
             {
-                return {x: data.timestamps[i], y: f}
+                return {x: data.timestamps[i], y: f*100}
             })
             myChart.data.datasets[0].data = temperatures
             myChart.data.datasets[1].data = fans
