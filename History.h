@@ -17,6 +17,8 @@ class History
 
 		void push(float values[entries])
 		{
+			if (wait)
+				Serial.println("waiting");
 			while(wait);
 			mTimestamps[mEnd] = millis();
 			for (int i=0; i<entries; i++)
@@ -60,7 +62,7 @@ class History
 		}
 		
 	private:
-		bool wait = false;
+		volatile bool wait = false;
 		unsigned int mStart = 0, mEnd = 0;
 		const char * mNames[entries];
 		unsigned long mTimestamps[size];
