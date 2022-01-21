@@ -309,7 +309,7 @@ setInterval(() =>
                 return {x: data.timestamps[i], y: f*100}
             })
             myChart.data.datasets[0].data = heater
-            myChart.data.datasets[2].data = air
+            myChart.data.datasets[1].data = air
             myChart.data.datasets[2].data = fans
             myChart.update()
         }
