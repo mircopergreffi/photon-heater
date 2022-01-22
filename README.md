@@ -1,16 +1,6 @@
 # photon-heater
 
-#Requirements
-
-Arduino Boards:
-https://dl.espressif.com/dl/package_esp32_index.json
-
-Arduino Libraries:
-https://github.com/me-no-dev/ESPAsyncWebServer
-https://arduinojson.org/
-
-# Other
-
+#
 http://tipregostampa/
 
 Changing hostname requires reboot
