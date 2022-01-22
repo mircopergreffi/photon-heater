@@ -35,10 +35,10 @@ class CircularBuffer
 			mEnd = 0;
 		}
 		// Push a new elment at the tail of the buffer
-		void push(T item)
+		void push(const T & item)
 		{
 			if (isFull())
-				pop();
+				mStart = (mStart + 1) % size)
 			mBuffer[mEnd++] = item;
 			mEnd %= size;
 		}
@@ -47,12 +47,12 @@ class CircularBuffer
 		{
 			if (isEmpty())
 				throw EmptyBufferException();
-			T item = mBuffer[start++];
+			T item = mBuffer[mStart++];
 			mStart %= size;
 			return item;
 		}
 		// Returns the element a the give index
-		T get(buffer_t index)
+		T get(buffer_t index) const
 		{
 			if (isEmpty() || index >= size())
 				throw OutOfBoundsException();
@@ -61,7 +61,7 @@ class CircularBuffer
 			return mBuffer[index];
 		}
 		// Returns the size of the buffer
-		buffer_t size()
+		buffer_t size() const
 		{
 			if (mEnd >= mStart)
 				return mEnd - mStart;
@@ -69,12 +69,12 @@ class CircularBuffer
 				return mEnd - mStart + size;
 		}
 		// Returns whether the buffer is empty
-		bool isEmpty()
+		bool isEmpty() const
 		{
 			return mStart == mEnd;
 		}
 		// Returns whether the buffer is full
-		bool isFull()
+		bool isFull() const
 		{
 			return mStart == ((mEnd + 1) % size);
 		}
