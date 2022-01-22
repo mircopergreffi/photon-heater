@@ -52,7 +52,7 @@ class CircularBuffer
 			return item;
 		}
 		// Returns the element a the give index
-		T get(buffer_t index) const
+		T& get(buffer_t index)
 		{
 			if (isEmpty() || index >= size())
 				throw OutOfBoundsException();
