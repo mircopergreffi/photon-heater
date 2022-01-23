@@ -2,7 +2,7 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define HISTORY_SIZE 30
+#define HISTORY_SIZE 60
 
 #include <ArduinoJson.h>
 
