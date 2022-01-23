@@ -2,6 +2,8 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#define HISTORY_SIZE
+
 #include <ArduinoJson.h>
 #include <PID_v1.h>
 
@@ -86,14 +88,14 @@ class Hardware
 		{
 			return mStatus;
 		}
-		const History & getHistory() const
+		const History<float, 3, HISTORY_SIZE> & getHistory() const
 		{
 			return mHistory;
 		}
 	private:
 		unsigned long mLastTimestamp;
 		volatile Status mStatus;
-		volatile History<float, 3, 30> mHistory;
+		volatile History<float, 3, HISTORY_SIZE> mHistory;
 		Heater mHeater;
 		Fan mFan;
 		NTCSensor mSensorHeater;
