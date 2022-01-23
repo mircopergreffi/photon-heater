@@ -107,6 +107,13 @@ class Hardware
 			/* End of critical section */
 		}
 
+		void printHistoryTo(Print &stream, unsigned long fromTimestamp, char separator)
+		{
+			/* Start of critical section */
+			mHistory.printTo(stream, fromTimestamp, separator);
+			/* End of critical section */
+		}
+
 		const Status & getStatus() const
 		{
 			return mStatus;

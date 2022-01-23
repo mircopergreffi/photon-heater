@@ -110,6 +110,15 @@ void setup() {
 		request->send(response);
 	});
 
+	server.on("/history.tsv", HTTP_GET, [](AsyncWebServerRequest* request){
+		unsigned long fromTimestamp = 0;
+		if (request->hasParam("timestamp"))
+			fromTimestamp = request->getParam("timestamp")->value().toInt();
+		AsyncResponseStream* response = request->beginResponseStream("text/tab-separated-values");
+		mHardware.printHistoryTo(*response, fromTimestamp, '\t');
+		request->send(response);
+	});
+
 	server.onRequestBody([](AsyncWebServerRequest* request, uint8_t *data, size_t len, size_t index, size_t total){
 		if (request->url() == "/config.json")
 		{
