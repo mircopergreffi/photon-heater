@@ -12,7 +12,7 @@ bool configChanged = false;
 
 File file;
 
-bool connectToWiFi(StaticJsonDocument<2048> &doc)
+bool connectToWiFi(JsonDocument &doc)
 {
 	// Connect to Wi-Fi
 	const char * ssid = doc["wifi"]["ssid"];
