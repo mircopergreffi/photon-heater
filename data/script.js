@@ -26,11 +26,18 @@ const graphConfig = {
         ],
     },
     options: {
+        animation: {
+            duration: 0
+        },
         scales: {
             y: {
                 suggestedMax: 100,
                 suggestedMin: 0,
             },
+            x: {
+                min: -60,
+                max: 0
+            }
         },
         responsive: true,
         plugins: {
@@ -304,17 +311,22 @@ setInterval(() =>
         type:"GET",
         success: function(data){
             data = JSON.parse(data)
+            maxTimestamp = data.timestamps.reduce((max, v) => max = max > v ? max : v, 0)
+            timestamps = data.timestamps.map((t,i) =>
+            {
+                return (t - maxTimestamp)/1000
+            })
             const heater = data.Heater.map((t,i) =>
             {
-                return {x: data.timestamps[i], y: t}
+                return {x: timestamps[i], y: t}
             })
             const air = data.Air.map((a,i) =>
             {
-                return {x: data.timestamps[i], y: a}
+                return {x: timestamps[i], y: a}
             })
             const fans = data.Fan.map((f,i) =>
             {
-                return {x: data.timestamps[i], y: f*100}
+                return {x: timestamps[i], y: f*100}
             })
             myChart.data.datasets[0].data = heater
             myChart.data.datasets[1].data = air
