@@ -58,6 +58,10 @@ class CircularBuffer
 			index %= size;
 			return mBuffer[index];
 		}
+		const T& get(size_t index) const
+		{
+			return get(index);
+		}
 		// Returns the size of the buffer
 		size_t length() const
 		{
