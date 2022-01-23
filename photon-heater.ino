@@ -101,7 +101,7 @@ void setup() {
 		if (request->hasParam("timestamp"))
 			fromTimestamp = request->getParam("timestamp")->value().toInt();
 		AsyncResponseStream* response = request->beginResponseStream("application/json");
-		StaticJsonDocument doc(2048);
+		DynamicJsonDocument doc(4096);
 		mHardware.populateHistoryJson(doc, fromTimestamp);
 		// Serial.print("JsonDocument (history.json) using: ");
 		// Serial.print(doc.memoryUsage());
