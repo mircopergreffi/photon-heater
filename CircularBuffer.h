@@ -77,8 +77,8 @@ class CircularBuffer
 			return mStart == ((mEnd + 1) % size);
 		}
 	private:
-		volatile size_t mStart, mEnd;
-		volatile T mBuffer[size];
+		size_t mStart, mEnd;
+		T mBuffer[size];
 };
 
 #endif /* CIRCULAR_BUFFER_H */
