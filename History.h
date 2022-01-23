@@ -34,12 +34,19 @@ class History
 			size_t len = mBuffer.length();
 			for (size_t i = 0; i<len; i++)
 			{
-				const HistoryEntry<T, N> & entry = mBuffer.get(i);
-				if (entry.timestamp < fromTimestamp)
-					continue;
-				doc["timestamps"][i] = entry.timestamp;
-				for (size_t j = 0; j<N; j++)
-					doc[mNames[j]][i] = entry.values[j];
+				try
+				{
+					const HistoryEntry<T, N> & entry = mBuffer.get(i);
+					if (entry.timestamp < fromTimestamp)
+						continue;
+					doc["timestamps"][i] = entry.timestamp;
+					for (size_t j = 0; j<N; j++)
+						doc[mNames[j]][i] = entry.values[j];
+				}
+				catch (OutOfBoundsException& e)
+				{
+					Serial.println(e.what());
+				}
 			}
 		}
 		

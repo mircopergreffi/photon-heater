@@ -101,8 +101,11 @@ void setup() {
 		if (request->hasParam("timestamp"))
 			fromTimestamp = request->getParam("timestamp")->value().toInt();
 		AsyncResponseStream* response = request->beginResponseStream("application/json");
-		StaticJsonDocument<12288> doc;
+		StaticJsonDocument doc(2048);
 		mHardware.populateHistoryJson(doc, fromTimestamp);
+		// Serial.print("JsonDocument (history.json) using: ");
+		// Serial.print(doc.memoryUsage());
+		// Serial.println(" bytes");
 		serializeJson(doc, *response);
 		request->send(response);
 	});

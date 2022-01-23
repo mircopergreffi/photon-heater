@@ -9,6 +9,7 @@
 
 class OutOfBoundsException : public std::exception
 {
+	public:
 	const char * what() const throw()
 	{
 		return "Out Of Bounds Exception";
@@ -16,6 +17,7 @@ class OutOfBoundsException : public std::exception
 };
 class EmptyBufferException : public std::exception
 {
+	public:
 	const char * what() const throw()
 	{
 		return "Empty Buffer Exception";
@@ -50,7 +52,7 @@ class CircularBuffer
 			return item;
 		}
 		// Returns the element a the give index
-		T& get(size_t index)
+		const T& get(size_t index) const
 		{
 			if (isEmpty() || index >= length())
 				throw OutOfBoundsException();
@@ -58,10 +60,10 @@ class CircularBuffer
 			index %= size;
 			return mBuffer[index];
 		}
-		const T& get(size_t index) const
-		{
-			return get(index);
-		}
+		// const T& get(size_t index) const
+		// {
+		// 	return get(index);
+		// }
 		// Returns the size of the buffer
 		size_t length() const
 		{

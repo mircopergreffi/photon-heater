@@ -57,7 +57,7 @@ class Hardware
 				mHeater.setPower(0);
 			}
 
-			if (timestamp - mLastTimestamp >= 1000)
+			if (timestamp - mLastTimestampHistory >= 1000)
 			{
 				HistoryEntry<float, 3> entry;
 				entry.timestamp = timestamp;
@@ -68,6 +68,7 @@ class Hardware
 				/* Start of critical section */
 				mHistory.push(entry);
 				/* End of critical section */
+				mLastTimestampHistory = timestamp;
 			}
 
 			mLastTimestamp = timestamp;
@@ -112,7 +113,7 @@ class Hardware
 		}
 	private:
 		bool mHeaterOn;
-		unsigned long mLastTimestamp;
+		unsigned long mLastTimestamp, mLastTimestampHistory;
 		Status mStatus;
 		History<float, 3, HISTORY_SIZE> mHistory;
 		Heater mHeater;
