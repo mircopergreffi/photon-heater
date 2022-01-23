@@ -9,20 +9,20 @@
 
 typedef size_t buffer_t;
 
-struct OutOfBoundsException : public exception
+class OutOfBoundsException : public std::exception
 {
 	const char * what() const throw()
 	{
 		return "Out Of Bounds Exception";
 	}
-}
-struct EmptyBufferException : public exception
+};
+class EmptyBufferException : public std::exception
 {
 	const char * what() const throw()
 	{
 		return "Empty Buffer Exception";
 	}
-}
+};
 
 template<typename T, buffer_t size>
 class CircularBuffer
@@ -38,7 +38,7 @@ class CircularBuffer
 		void push(const T & item)
 		{
 			if (isFull())
-				mStart = (mStart + 1) % size)
+				mStart = (mStart + 1) % size;
 			mBuffer[mEnd++] = item;
 			mEnd %= size;
 		}
@@ -54,14 +54,14 @@ class CircularBuffer
 		// Returns the element a the give index
 		T& get(buffer_t index)
 		{
-			if (isEmpty() || index >= size())
+			if (isEmpty() || index >= length())
 				throw OutOfBoundsException();
 			index += mStart;
 			index %= size;
 			return mBuffer[index];
 		}
 		// Returns the size of the buffer
-		buffer_t size() const
+		buffer_t length() const
 		{
 			if (mEnd >= mStart)
 				return mEnd - mStart;
@@ -81,6 +81,6 @@ class CircularBuffer
 	private:
 		volatile buffer_t mStart, mEnd;
 		volatile T mBuffer[size];
-}
+};
 
 #endif /* CIRCULAR_BUFFER_H */
