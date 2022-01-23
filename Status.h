@@ -19,6 +19,6 @@ class Status
         // volatile double temperatureResin;
         volatile fan_mode_t fanMode;
         volatile float fanManualSpeed;
-}
+};
 
 #endif /* STATUS_H */
