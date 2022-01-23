@@ -12,6 +12,7 @@
 #include "Fan.h"
 #include "NTCSensor.h"
 #include "PID.h"
+#include "SimpleLock.h"
 
 const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
 
@@ -65,7 +66,9 @@ class Hardware
 				entry.values[1] = mStatus.temperatureAir;
 				// entry.values[2] = mStatus.temperatureResin;
 				entry.values[2] = mFan.getSpeed();
+				mSimpleLock.lock();
 				mHistory.push(entry);
+				mSimpleLock.unlock();
 			}
 
 			mLastTimestamp = timestamp;
@@ -97,13 +100,16 @@ class Hardware
 			mController.setTunings(json["control"]["p"].as<float>(), json["control"]["i"].as<float>(), json["control"]["d"].as<float>());
 		}
 
+		void populateHistoryJson(JsonDocument & doc, unsigned long fromTimestamp)
+		{
+			mSimpleLock.lock();
+			mHistory.populateJson(doc, fromTimestamp);
+			mSimpleLock.unlock();
+		}
+
 		const Status & getStatus() const
 		{
 			return mStatus;
-		}
-		const History<float, 3, HISTORY_SIZE> & getHistory() const
-		{
-			return mHistory;
 		}
 	private:
 		bool mHeaterOn;
@@ -116,6 +122,7 @@ class Hardware
 		NTCSensor mSensorAir;
 		// NTCSensor mSensorResin;
 		PID mController;
+		SimpleLock mSimpleLock;
 };
 
 #endif /* HARDWARE_H */

@@ -103,7 +103,7 @@ void setup() {
 		}
 		AsyncResponseStream* response = request->beginResponseStream("application/json");
 		StaticJsonDocument<12288> doc;
-		mHardware.getHistory().populateJson(doc, fromTimestamp);
+		mHardware.populateHistoryJson(doc, fromTimestamp);
 		serializeJson(doc, *response);
 		request->send(response);
 	});
