@@ -2,16 +2,16 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define HISTORY_SIZE
+#define HISTORY_SIZE 30
 
 #include <ArduinoJson.h>
-#include <PID_v1.h>
 
 #include "Status.h"
 #include "History.h"
 #include "Heater.h"
 #include "Fan.h"
 #include "NTCSensor.h"
+#include "PID.h"
 
 const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
 
@@ -19,10 +19,9 @@ class Hardware
 {
 	public:
 		Hardware()
-		: mHistory({"Heater","Air","Fan" /*, "Resin" */}),
-		  mController(&mStatus.temperatureHeater, &mStatus.powerHeater, &mStatus.temperatureSetpoint, 0.0, 0.0, 0.0, P_ON_E, DIRECT)
+		: mHistory(sensorNames)
 		{
-
+			mLastTimestamp = 0;
 		}
 
 		void run()
@@ -47,18 +46,35 @@ class Hardware
 					mFan.setSpeed(mStatus.fanManualSpeed);
 			}
 
-			mController.Compute();
-			mHeater.setPower(mStatus.powerHeater);
+			if (mHeaterOn)
+			{
+				float dt = ((float)(timestamp - mLastTimestamp))/1000.0;
+				mStatus.powerHeater = mController.Compute(mStatus.temperatureHeater, mStatus.temperatureSetpoint, dt);
+				mHeater.setPower(mStatus.powerHeater);
+			}
+			else
+			{
+				mHeater.setPower(0);
+			}
 
 			if (timestamp - mLastTimestamp >= 1000)
 			{
-				float values[] = {mStatus.temperatureHeater, mStatus.temperatureAir, mFan.getSpeed()};
-				mHistory.push(timestamp, values);
+				HistoryEntry<float, 3> entry;
+				entry.timestamp = timestamp;
+				entry.values[0] = mStatus.temperatureHeater;
+				entry.values[1] = mStatus.temperatureAir;
+				// entry.values[2] = mStatus.temperatureResin;
+				entry.values[2] = mFan.getSpeed();
+				mHistory.push(entry);
 			}
 
 			mLastTimestamp = timestamp;
 		}
 
+		void setHeaterOn(bool heaterOn)
+		{
+			mHeaterOn = heaterOn;
+		}
 		void setFanMode(fan_mode_t mode)
 		{
 			mStatus.fanMode = mode;
@@ -71,17 +87,14 @@ class Hardware
 		{
 			mStatus.temperatureSetpoint = temperature;
 		}
-		void loadFromJson(JsonObject & json)
+		void loadFromJson(JsonDocument & json)
 		{
-			mHeater.loadFromJson(doc["heater"]);
-			mFan.loadFromJson(doc["fan"]);
-			mSensorHeater.loadFromJson(doc["heater"]["sensor"]);
-			mSensorAir.loadFromJson(doc["air_sensor"]);
-			// mSensorResin.loadFromJson(doc["resin_sensor"]);
-			mController.SetTunings(doc["control"]["p"].as<float>(), doc["control"]["i"].as<float>(), doc["control"]["d"].as<float>());
-			mController.SetOutputLimits(0.0, 1.0);
-			mController.SetSampleTime(100);
-			mController.SetMode(AUTOMATIC);
+			mHeater.loadFromJson(json["heater"]);
+			mFan.loadFromJson(json["fan"]);
+			mSensorHeater.loadFromJson(json["heater"]["sensor"]);
+			mSensorAir.loadFromJson(json["air_sensor"]);
+			// mSensorResin.loadFromJson(json["resin_sensor"]);
+			mController.setTunings(json["control"]["p"].as<float>(), json["control"]["i"].as<float>(), json["control"]["d"].as<float>());
 		}
 
 		const Status & getStatus() const
@@ -93,15 +106,16 @@ class Hardware
 			return mHistory;
 		}
 	private:
+		bool mHeaterOn;
 		unsigned long mLastTimestamp;
-		volatile Status mStatus;
-		volatile History<float, 3, HISTORY_SIZE> mHistory;
+		Status mStatus;
+		History<float, 3, HISTORY_SIZE> mHistory;
 		Heater mHeater;
 		Fan mFan;
 		NTCSensor mSensorHeater;
 		NTCSensor mSensorAir;
 		// NTCSensor mSensorResin;
 		PID mController;
-}
+};
 
 #endif /* HARDWARE_H */
