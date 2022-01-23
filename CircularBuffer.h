@@ -7,8 +7,6 @@
 // Source: https://en.wikipedia.org/wiki/Circular_buffer
 // TODO: size(), isFull()
 
-typedef size_t buffer_t;
-
 class OutOfBoundsException : public std::exception
 {
 	const char * what() const throw()
@@ -24,7 +22,7 @@ class EmptyBufferException : public std::exception
 	}
 };
 
-template<typename T, buffer_t size>
+template<typename T, size_t size>
 class CircularBuffer
 {
 	public:
@@ -52,7 +50,7 @@ class CircularBuffer
 			return item;
 		}
 		// Returns the element a the give index
-		T& get(buffer_t index)
+		T& get(size_t index)
 		{
 			if (isEmpty() || index >= length())
 				throw OutOfBoundsException();
@@ -61,7 +59,7 @@ class CircularBuffer
 			return mBuffer[index];
 		}
 		// Returns the size of the buffer
-		buffer_t length() const
+		size_t length() const
 		{
 			if (mEnd >= mStart)
 				return mEnd - mStart;
@@ -79,7 +77,7 @@ class CircularBuffer
 			return mStart == ((mEnd + 1) % size);
 		}
 	private:
-		volatile buffer_t mStart, mEnd;
+		volatile size_t mStart, mEnd;
 		volatile T mBuffer[size];
 };
 
