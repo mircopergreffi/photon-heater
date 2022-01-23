@@ -98,9 +98,8 @@ void setup() {
 
 	server.on("/history.json", HTTP_GET, [](AsyncWebServerRequest* request){
 		unsigned long fromTimestamp = 0;
-		if (request->hasParam("timestamp")){
+		if (request->hasParam("timestamp"))
 			fromTimestamp = request->getParam("timestamp")->value().toInt();
-		}
 		AsyncResponseStream* response = request->beginResponseStream("application/json");
 		StaticJsonDocument<12288> doc;
 		mHardware.populateHistoryJson(doc, fromTimestamp);
