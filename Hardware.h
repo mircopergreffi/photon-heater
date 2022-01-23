@@ -12,7 +12,6 @@
 #include "Fan.h"
 #include "NTCSensor.h"
 #include "PID.h"
-#include "SimpleLock.h"
 
 const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
 
@@ -66,9 +65,9 @@ class Hardware
 				entry.values[1] = mStatus.temperatureAir;
 				// entry.values[2] = mStatus.temperatureResin;
 				entry.values[2] = mFan.getSpeed();
-				mSimpleLock.lock();
+				/* Start of critical section */
 				mHistory.push(entry);
-				mSimpleLock.unlock();
+				/* End of critical section */
 			}
 
 			mLastTimestamp = timestamp;
@@ -102,9 +101,9 @@ class Hardware
 
 		void populateHistoryJson(JsonDocument & doc, unsigned long fromTimestamp)
 		{
-			mSimpleLock.lock();
+			/* Start of critical section */
 			mHistory.populateJson(doc, fromTimestamp);
-			mSimpleLock.unlock();
+			/* End of critical section */
 		}
 
 		const Status & getStatus() const
@@ -122,7 +121,6 @@ class Hardware
 		NTCSensor mSensorAir;
 		// NTCSensor mSensorResin;
 		PID mController;
-		SimpleLock mSimpleLock;
 };
 
 #endif /* HARDWARE_H */
