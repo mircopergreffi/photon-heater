@@ -350,12 +350,12 @@ setInterval(() =>
 					})
 				else
 					if (x != "")
-						x.split('\t').forEach((w,j) => data[labels[j]].push(w))
+						x.split('\t').forEach((w,j) => data[labels[j]].push(Number(w)))
 			})
-			console.log(data);
+			console.log(data)
 
-			maxTimestamp = data.Timestamp.reduce((max, v) => max = max > v ? max : v, 0)
-			timestamps = data.Timestamp.map((t,i) =>
+			maxTimestamp = data.Timestamp.reduce((max, v) => (max > v ? max : v), 0)
+			const timestamps = data.Timestamp.map(t =>
 			{
 				return (t - maxTimestamp)/1000
 			})

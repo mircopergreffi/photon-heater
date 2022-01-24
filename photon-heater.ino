@@ -226,6 +226,6 @@ void loop() {
 		readConfigFile();
 		configChanged = false;
 	}
-	
+
 	mHardware.run();
 }
