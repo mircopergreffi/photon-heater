@@ -2,7 +2,7 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define HISTORY_SIZE 30
+#define HISTORY_SIZE 60
 
 #include <ArduinoJson.h>
 
@@ -12,7 +12,6 @@
 #include "Fan.h"
 #include "NTCSensor.h"
 #include "PID.h"
-#include "SimpleLock.h"
 
 const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
 
@@ -58,7 +57,7 @@ class Hardware
 				mHeater.setPower(0);
 			}
 
-			if (timestamp - mLastTimestamp >= 1000)
+			if (timestamp - mLastTimestampHistory >= 1000)
 			{
 				HistoryEntry<float, 3> entry;
 				entry.timestamp = timestamp;
@@ -66,9 +65,10 @@ class Hardware
 				entry.values[1] = mStatus.temperatureAir;
 				// entry.values[2] = mStatus.temperatureResin;
 				entry.values[2] = mFan.getSpeed();
-				mSimpleLock.lock();
+				/* Start of critical section */
 				mHistory.push(entry);
-				mSimpleLock.unlock();
+				/* End of critical section */
+				mLastTimestampHistory = timestamp;
 			}
 
 			mLastTimestamp = timestamp;
@@ -102,9 +102,16 @@ class Hardware
 
 		void populateHistoryJson(JsonDocument & doc, unsigned long fromTimestamp)
 		{
-			mSimpleLock.lock();
+			/* Start of critical section */
 			mHistory.populateJson(doc, fromTimestamp);
-			mSimpleLock.unlock();
+			/* End of critical section */
+		}
+
+		void printHistoryTo(Print &stream, unsigned long fromTimestamp, char separator)
+		{
+			/* Start of critical section */
+			mHistory.printTo(stream, fromTimestamp, separator);
+			/* End of critical section */
 		}
 
 		const Status & getStatus() const
@@ -113,7 +120,7 @@ class Hardware
 		}
 	private:
 		bool mHeaterOn;
-		unsigned long mLastTimestamp;
+		unsigned long mLastTimestamp, mLastTimestampHistory;
 		Status mStatus;
 		History<float, 3, HISTORY_SIZE> mHistory;
 		Heater mHeater;
@@ -122,7 +129,6 @@ class Hardware
 		NTCSensor mSensorAir;
 		// NTCSensor mSensorResin;
 		PID mController;
-		SimpleLock mSimpleLock;
 };
 
 #endif /* HARDWARE_H */

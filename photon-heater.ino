@@ -98,13 +98,24 @@ void setup() {
 
 	server.on("/history.json", HTTP_GET, [](AsyncWebServerRequest* request){
 		unsigned long fromTimestamp = 0;
-		if (request->hasParam("timestamp")){
+		if (request->hasParam("timestamp"))
 			fromTimestamp = request->getParam("timestamp")->value().toInt();
-		}
 		AsyncResponseStream* response = request->beginResponseStream("application/json");
-		StaticJsonDocument<12288> doc;
+		DynamicJsonDocument doc(4096);
 		mHardware.populateHistoryJson(doc, fromTimestamp);
+		// Serial.print("JsonDocument (history.json) using: ");
+		// Serial.print(doc.memoryUsage());
+		// Serial.println(" bytes");
 		serializeJson(doc, *response);
+		request->send(response);
+	});
+
+	server.on("/history.tsv", HTTP_GET, [](AsyncWebServerRequest* request){
+		unsigned long fromTimestamp = 0;
+		if (request->hasParam("timestamp"))
+			fromTimestamp = request->getParam("timestamp")->value().toInt();
+		AsyncResponseStream* response = request->beginResponseStream("text/tab-separated-values");
+		mHardware.printHistoryTo(*response, fromTimestamp, '\t');
 		request->send(response);
 	});
 
