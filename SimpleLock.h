@@ -11,12 +11,12 @@ class SimpleLock
         }
         void lock()
         {
-            while(mLock);
-            mLock = true;
+            // while(mLock);
+            // mLock = true;
         }
         void unlock()
         {
-            mLock = false;
+            // mLock = false;
         }
     private:
         volatile bool mLock;

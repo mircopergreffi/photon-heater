@@ -32,7 +32,7 @@ bool connectToWiFi(JsonDocument &doc)
 		delay(1000);
 		Serial.println("Connecting to WiFi..");
 	}
-	
+
 	// Print ESP32 Local IP Address
 	Serial.println(WiFi.localIP());
 
