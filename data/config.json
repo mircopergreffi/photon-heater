@@ -27,7 +27,7 @@
 
 	"fan":
 	{
-		"pin": "16",
+		"pin": "23",
 		"speed_max": 1.0,
 		"speed_min": 0.4
 	},
