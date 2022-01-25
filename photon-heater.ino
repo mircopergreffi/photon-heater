@@ -179,12 +179,12 @@ void setup() {
 		else if (request->hasParam("fanMode"))
 		{
 			String mode = request->getParam("fanMode")->value();
-			if (mode.compareTo("auto"))
+			if (mode.compareTo("auto") == 0)
 			{
 				mHardware.setFanMode(FAN_AUTO);
 				request->send(200, "plain/text", "fan-auto");
 			}
-			else if (mode.compareTo("manual"))
+			else if (mode.compareTo("manual") == 0)
 			{
 				mHardware.setFanMode(FAN_MANUAL);
 				request->send(200, "plain/text", "fan-manual");
