@@ -28,6 +28,7 @@ class Fan
 			mPin = json["pin"];
 			mMaxSpeed = json["speed_max"];
 			mMinSpeed = json["speed_min"];
+			setup();
 		}
 		void setSpeed(float speed)
 		{
