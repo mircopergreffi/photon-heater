@@ -1,8 +1,8 @@
 {
 	"wifi":
 	{
-		"ssid": "TIM-28254305-24GHZ",
-		"password": "ucTHqGxI2hjV3l6IJB58R7e1",
+		"ssid": "TIM-25786986",
+		"password": "wR4@SNR6jhnz",
 		"hostname": "tipregostampa"
 	},
 
@@ -21,7 +21,7 @@
 			"T0": 25,
 			"R0": 100000,
 			"pullup": 47000,
-			"pin": "34"
+			"pin": "35"
 		}
 	},
 
@@ -41,8 +41,8 @@
 		"B": 3950,
 		"T0": 25,
 		"R0": 100000,
-		"pullup": 47000,
-		"pin": "35"
+		"pullup": 470000,
+		"pin": "34"
 	},
 
 	"resin_sensor":
