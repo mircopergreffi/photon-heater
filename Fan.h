@@ -51,9 +51,9 @@ class Fan
 		}
 		float purgeSpeed(float speed)
 		{
-			if (speed >= mMaxSpeed)
+			if (speed > mMaxSpeed)
 				speed = mMaxSpeed;
-			if (speed >= mMinSpeed && speed > 0)
+			if (speed < mMinSpeed && speed > 0)
 				speed = mMinSpeed;
 			if (speed < PWM_Fan_Duty_Cycle_Min)
 				speed = 0;
