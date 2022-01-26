@@ -1,14 +1,14 @@
 {
 	"wifi":
 	{
-		"ssid": "TIM-28254305-24GHZ",
-		"password": "ucTHqGxI2hjV3l6IJB58R7e1",
+		"ssid": "TIM-25786986",
+		"password": "wR4@SNR6jhnz",
 		"hostname": "tipregostampa"
 	},
 
 	"heater":
 	{
-		"pin": "17",
+		"pin": "22",
 		"temp_max": 60,
 		"temp_min": 0,
 		"temp_critical": 80,
@@ -27,7 +27,7 @@
 
 	"fan":
 	{
-		"pin": "16",
+		"pin": "23",
 		"speed_max": 1.0,
 		"speed_min": 0.4
 	},
