@@ -41,7 +41,7 @@ class Fan
 		}
 		float getSpeed()
 		{
-			return mSpeed;
+			return 1 - mSpeed;
 		}
 	private:
 		void setup()
