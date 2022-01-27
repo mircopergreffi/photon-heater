@@ -8,7 +8,7 @@
 
 	"heater":
 	{
-		"pin": "21",
+		"pin": "23",
 		"temp_max": 60,
 		"temp_min": 0,
 		"temp_critical": 80,
