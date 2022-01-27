@@ -3,7 +3,7 @@
 #define HEATER_H
 
 #define PWM_Heater_Ch   2
-#define PWM_Heater_Freq 100
+#define PWM_Heater_Freq 10
 #define PWM_Heater_Rs   8
 #define PWM_Heater_Max  255
 #define PWM_Heater_Duty_Cycle_Max 0.95
