@@ -28,6 +28,7 @@ class Fan
 			mPin = json["pin"];
 			mMaxSpeed = json["speed_max"];
 			mMinSpeed = json["speed_min"];
+			setup();
 		}
 		void setSpeed(float speed)
 		{
@@ -51,9 +52,9 @@ class Fan
 		}
 		float purgeSpeed(float speed)
 		{
-			if (speed >= mMaxSpeed)
+			if (speed > mMaxSpeed)
 				speed = mMaxSpeed;
-			if (speed >= mMinSpeed && speed > 0)
+			if (speed < mMinSpeed && speed > 0)
 				speed = mMinSpeed;
 			if (speed < PWM_Fan_Duty_Cycle_Min)
 				speed = 0;
