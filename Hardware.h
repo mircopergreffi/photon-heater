@@ -50,12 +50,12 @@ class Hardware
 			{
 				float dt = ((float)(timestamp - mLastTimestamp))/1000.0;
 				mStatus.powerHeater = mController.Compute(mStatus.temperatureHeater, mStatus.temperatureSetpoint, dt);
-				mHeater.setPower(mStatus.powerHeater);
 			}
 			else
 			{
-				mHeater.setPower(0);
+				mStatus.powerHeater = 0;
 			}
+			mHeater.setPower(mStatus.powerHeater);
 
 			if (timestamp - mLastTimestampHistory >= 1000)
 			{
