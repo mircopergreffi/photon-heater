@@ -66,9 +66,23 @@ const graphConfig = {
 const ctx = document.getElementById("temperatureChart")
 const myChart = new Chart(ctx, graphConfig)
 
+const power = document.getElementById("power")
 const fanModeAuto = document.getElementById("fan-mode-auto")
 const fanSpeed = document.getElementById("speed")
 const temperature = document.getElementById("temperature")
+fanModeAuto.addEventListener("change", e =>
+{
+	const mode = e.target.checked ? "on" : "off"
+	minAjax({
+			url:"/set",
+			type:"GET",
+			data:{
+				heater: mode,
+			},
+			success: function(data){
+			}
+		})
+})
 fanModeAuto.addEventListener("change", e =>
 {
 	const mode = e.target.checked ? "auto" : "manual"
@@ -290,6 +304,7 @@ minAjax({
 	type:"GET",
 	success: function(data){
 		data = JSON.parse(data)
+		power.value = data.heater == "on"
 		fanModeAuto.value = data.fan.mode == "auto"
 		fanSpeed.value = data.fan.speed
 		temperature.value = data.temperature
