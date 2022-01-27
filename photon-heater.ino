@@ -108,6 +108,7 @@ void setup() {
 		// Serial.println(" bytes");
 		serializeJson(doc, *response);
 		request->send(response);
+		doc.clear();
 	});
 
 	server.on("/history.tsv", HTTP_GET, [](AsyncWebServerRequest* request){
