@@ -2,8 +2,8 @@
 #ifndef HEATER_H
 #define HEATER_H
 
-#define PWM_Heater_Ch   0
-#define PWM_Heater_Freq 10
+#define PWM_Heater_Ch   2
+#define PWM_Heater_Freq 100
 #define PWM_Heater_Rs   8
 #define PWM_Heater_Max  255
 #define PWM_Heater_Duty_Cycle_Max 0.95
@@ -34,7 +34,7 @@ class Heater
 		}
 		void setPower(float power)
 		{
-			if (power >= mPowerMax)
+			if (power > mPowerMax)
 				power = mPowerMax;
 			if (power < PWM_Heater_Duty_Cycle_Min)
 				power = 0;
