@@ -14,6 +14,19 @@
                 <canvas id="temperatureChart" width="400" height="250"></canvas>
             </div>
             <form action="salva-roba" method="POST" class="mb-8">
+                <div class="mb-4 flex align-center">
+                    <div class="mr-8">
+                        Power
+                    </div>
+                    <div class="flex align-center">
+                        Off
+                        <label class="switch mx-4">
+                            <input type="checkbox" name="power" id="power">
+                            <span class="slider round"></span>
+                        </label>
+                        On
+                    </div>
+                </div>
                 <div class="mb-4">
                     <div class="range-slidecontainer">
                         <label class="range-output" for="temperature">Temperature (?-?): </label>

@@ -12,6 +12,7 @@ class Status
 {
     public:
         float powerHeater;
+        bool heater;
         float temperatureSetpoint;
         float temperatureHeater;
         float temperatureAir; 

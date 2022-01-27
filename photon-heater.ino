@@ -210,6 +210,7 @@ void setup() {
 		doc["fan"]["speed"] = mHardware.getStatus().fanManualSpeed;
 		doc["fan"]["mode"] = mHardware.getStatus().fanMode == FAN_AUTO ? "auto" : "manual";
 		doc["temperature"] = mHardware.getStatus().temperatureSetpoint;
+		doc["heater"] = mHardware.getStatus().heater ? "on" : "off";
 		serializeJson(doc, *response);
 		request->send(response);
 	});
