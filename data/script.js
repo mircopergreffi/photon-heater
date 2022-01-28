@@ -7,13 +7,15 @@ const graphConfig = {
 				borderColor: "#e02900",
 				backgroundColor: "#e0290066",
 				showLine: true,
-				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
+				cubicInterpolationMode: 'monotone',
+				data: [{x: 10, y: 5}, {x: 20, y: 40}, {x: 30, y: 40}, {x: 40, y: 15}, {x: 50, y: 5}],
 			},
 			{
 				label: "Air",
 				borderColor: "#a832a8",
 				backgroundColor: "#a832a8",
 				showLine: true,
+				cubicInterpolationMode: 'monotone',
 				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
 			},
 			{
@@ -21,6 +23,7 @@ const graphConfig = {
 				borderColor: "#0377fc",
 				backgroundColor: "#0377fc",
 				showLine: true,
+				cubicInterpolationMode: 'monotone',
 				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
 			}
 		],
@@ -37,6 +40,11 @@ const graphConfig = {
 			x: {
 				min: -60,
 				max: 0
+			}
+		},
+		elements: {
+			point:{
+				radius: 0
 			}
 		},
 		responsive: true,
@@ -299,17 +307,20 @@ function loadConfigs(configs)
 
 // loadConfigs(configs)
 
-minAjax({
-	url:"/get",
-	type:"GET",
-	success: function(data){
-		data = JSON.parse(data)
-		power.value = data.heater == "on"
-		fanModeAuto.value = data.fan.mode == "auto"
-		fanSpeed.value = data.fan.speed
-		temperature.value = data.temperature
-	}
-})
+setInterval(() =>
+{
+	minAjax({
+		url:"/get",
+		type:"GET",
+		success: function(data){
+			data = JSON.parse(data)
+			power.checked = data.heater == "on"
+			fanModeAuto.checked = data.fan.mode == "auto"
+			fanSpeed.value = data.fan.speed
+			temperature.value = data.temperature
+		}
+	})
+}, 2000)
 
 minAjax({
 	url:"/config.json",
@@ -320,36 +331,7 @@ minAjax({
 })
 
 setInterval(() =>
-{
-	// minAjax({
-	// 	url:"/history.json",
-	// 	type:"GET",
-	// 	success: function(data){
-	// 		data = JSON.parse(data)
-	// 		maxTimestamp = data.timestamps.reduce((max, v) => max = max > v ? max : v, 0)
-	// 		timestamps = data.timestamps.map((t,i) =>
-	// 		{
-	// 			return (t - maxTimestamp)/1000
-	// 		})
-	// 		const heater = data.Heater.map((t,i) =>
-	// 		{
-	// 			return {x: timestamps[i], y: t}
-	// 		})
-	// 		const air = data.Air.map((a,i) =>
-	// 		{
-	// 			return {x: timestamps[i], y: a}
-	// 		})
-	// 		const fans = data.Fan.map((f,i) =>
-	// 		{
-	// 			return {x: timestamps[i], y: f*100}
-	// 		})
-	// 		myChart.data.datasets[0].data = heater
-	// 		myChart.data.datasets[1].data = air
-	// 		myChart.data.datasets[2].data = fans
-	// 		myChart.update()
-	// 	}
-	// })
-	
+{	
 	minAjax({
 		url:"/history.tsv",
 		type:"GET",
@@ -367,7 +349,6 @@ setInterval(() =>
 					if (x != "")
 						x.split('\t').forEach((w,j) => data[labels[j]].push(Number(w)))
 			})
-			console.log(data)
 
 			maxTimestamp = data.Timestamp.reduce((max, v) => (max > v ? max : v), 0)
 			const timestamps = data.Timestamp.map(t =>
