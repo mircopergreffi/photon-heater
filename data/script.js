@@ -302,17 +302,20 @@ function loadConfigs(configs)
 
 // loadConfigs(configs)
 
-minAjax({
-	url:"/get",
-	type:"GET",
-	success: function(data){
-		data = JSON.parse(data)
-		power.checked = data.heater == "on"
-		fanModeAuto.checked = data.fan.mode == "auto"
-		fanSpeed.value = data.fan.speed
-		temperature.value = data.temperature
-	}
-})
+setInterval(() =>
+{
+	minAjax({
+		url:"/get",
+		type:"GET",
+		success: function(data){
+			data = JSON.parse(data)
+			power.checked = data.heater == "on"
+			fanModeAuto.checked = data.fan.mode == "auto"
+			fanSpeed.value = data.fan.speed
+			temperature.value = data.temperature
+		}
+	})
+}, 2000)
 
 minAjax({
 	url:"/config.json",
