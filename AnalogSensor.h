@@ -33,7 +33,7 @@ class AnalogSensor
 		}
 		virtual float readValue()
 		{
-			return ((float)analogRead(mPin)) / 4095.0;
+			return ((float)(analogRead(mPin) - 235)) / 4095.0;
 		}
 		int getPin()
 		{
