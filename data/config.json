@@ -3,6 +3,8 @@
 	{
 		"ssid": "TIM-28254305-24GHZ",
 		"password": "ucTHqGxI2hjV3l6IJB58R7e1",
+		"ap_ssid": "photon-heater",
+		"ap_password": "tipregostampa",
 		"hostname": "tipregostampa"
 	},
 
