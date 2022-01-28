@@ -70,7 +70,7 @@ const power = document.getElementById("power")
 const fanModeAuto = document.getElementById("fan-mode-auto")
 const fanSpeed = document.getElementById("speed")
 const temperature = document.getElementById("temperature")
-fanModeAuto.addEventListener("change", e =>
+power.addEventListener("change", e =>
 {
 	const mode = e.target.checked ? "on" : "off"
 	minAjax({
