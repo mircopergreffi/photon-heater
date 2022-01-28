@@ -11,6 +11,7 @@
 #include "Heater.h"
 #include "Fan.h"
 #include "NTCSensor.h"
+#include "LowPassFilter.h"
 #include "PID.h"
 
 const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
@@ -30,9 +31,9 @@ class Hardware
 			if (timestamp - mLastTimestamp < 100)
 				return;
 
-			mStatus.temperatureHeater = mSensorHeater.readValue();
-			mStatus.temperatureAir = mSensorAir.readValue();
-			// mStatus.temperatureResin = mSensorResin.readValue();
+			mStatus.temperatureHeater = mFilterSensorHeater.filter(mSensorHeater.readValue());
+			mStatus.temperatureAir = mFilterSensorAir.filter(mSensorAir.readValue());
+			// mStatus.temperatureResin = mFilterSensorResin.filter(mSensorResin.readValue());
 
 			switch (mStatus.fanMode)
 			{
@@ -96,7 +97,10 @@ class Hardware
 			mFan.loadFromJson(json["fan"]);
 			mSensorHeater.loadFromJson(json["heater"]["sensor"]);
 			mSensorAir.loadFromJson(json["air_sensor"]);
+			mFilterSensorHeater.loadFromJson(json["heater"]["sensor"]["filter"]);
+			mFilterSensorAir.loadFromJson(json["air_sensor"]["filter"]);
 			// mSensorResin.loadFromJson(json["resin_sensor"]);
+			// mFilterSensorAir.loadFromJson(json["resin_sensor"]["filter"]);
 			mController.setTunings(json["control"]["p"].as<float>(), json["control"]["i"].as<float>(), json["control"]["d"].as<float>());
 		}
 
@@ -124,8 +128,8 @@ class Hardware
 		History<float, 3, HISTORY_SIZE> mHistory;
 		Heater mHeater;
 		Fan mFan;
-		NTCSensor mSensorHeater;
-		NTCSensor mSensorAir;
+		NTCSensor mSensorHeater, mSensorAir;
+		LowPassFilter mFilterSensorHeater, mFilterSensorAir;
 		// NTCSensor mSensorResin;
 		PID mController;
 };

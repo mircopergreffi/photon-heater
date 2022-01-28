@@ -21,7 +21,12 @@
 			"T0": 25,
 			"R0": 100000,
 			"pullup": 47240,
-			"pin": "35"
+			"pin": "35",
+			"filter":
+			{
+				"type": "lowpass",
+				"frequency": "2"
+			}
 		}
 	},
 
@@ -42,7 +47,12 @@
 		"T0": 25,
 		"R0": 100000,
 		"pullup": 475500,
-		"pin": "34"
+		"pin": "34",
+		"filter":
+		{
+			"type": "lowpass",
+			"frequency": "2"
+		}
 	},
 
 	"resin_sensor":
@@ -53,7 +63,12 @@
 		"T0": 25,
 		"R0": 100000,
 		"pullup": 47000,
-		"pin": "27"
+		"pin": "27",
+		"filter":
+		{
+			"type": "lowpass",
+			"frequency": "2"
+		}
 	},
 
 	"control":
