@@ -20,7 +20,7 @@ class PID
 		{
 			setOutputLimits(0.0, 1.0);
 			setDirection(DIRECT);
-			setProportionalOn(P_ON_M);
+			setProportionalOn(P_ON_E);
 			mLastInput = 0;
 			mOutputSum = 0;
 		}

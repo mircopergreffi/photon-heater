@@ -2,7 +2,7 @@
 #ifndef HEATER_H
 #define HEATER_H
 
-#define PWM_Heater_Ch   0
+#define PWM_Heater_Ch   2
 #define PWM_Heater_Freq 10
 #define PWM_Heater_Rs   8
 #define PWM_Heater_Max  255
@@ -25,16 +25,16 @@ class Heater
 		}
 		void loadFromJson(JsonObject json)
 		{
-			mPin = json["heater_pin"];
-			mTempMax = json["heater_temp_max"];
-			mTempMin = json["heater_temp_min"];
-			mTempCritical = json["heater_temp_critical"];
-			mPowerMax = json["heater_power_max"];
+			mPin = json["pin"];
+			mTempMax = json["temp_max"];
+			mTempMin = json["temp_min"];
+			mTempCritical = json["temp_critical"];
+			mPowerMax = json["power_max"];
 			setup();
 		}
 		void setPower(float power)
 		{
-			if (power >= mPowerMax)
+			if (power > mPowerMax)
 				power = mPowerMax;
 			if (power < PWM_Heater_Duty_Cycle_Min)
 				power = 0;
@@ -43,7 +43,7 @@ class Heater
 			ledcWrite(PWM_Heater_Ch, power*PWM_Heater_Max);
 		}
 	private:
-		void setup()
+		void setup() const
 		{
 			ledcAttachPin(mPin, PWM_Heater_Ch);
 			ledcSetup(PWM_Heater_Ch, PWM_Heater_Freq, PWM_Heater_Rs);

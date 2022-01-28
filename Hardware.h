@@ -46,16 +46,16 @@ class Hardware
 					mFan.setSpeed(mStatus.fanManualSpeed);
 			}
 
-			if (mHeaterOn)
+			if (mStatus.heater)
 			{
 				float dt = ((float)(timestamp - mLastTimestamp))/1000.0;
 				mStatus.powerHeater = mController.Compute(mStatus.temperatureHeater, mStatus.temperatureSetpoint, dt);
-				mHeater.setPower(mStatus.powerHeater);
 			}
 			else
 			{
-				mHeater.setPower(0);
+				mStatus.powerHeater = 0;
 			}
+			mHeater.setPower(mStatus.powerHeater);
 
 			if (timestamp - mLastTimestampHistory >= 1000)
 			{
@@ -76,7 +76,7 @@ class Hardware
 
 		void setHeaterOn(bool heaterOn)
 		{
-			mHeaterOn = heaterOn;
+			mStatus.heater = heaterOn;
 		}
 		void setFanMode(fan_mode_t mode)
 		{
@@ -119,7 +119,6 @@ class Hardware
 			return mStatus;
 		}
 	private:
-		bool mHeaterOn;
 		unsigned long mLastTimestamp, mLastTimestampHistory;
 		Status mStatus;
 		History<float, 3, HISTORY_SIZE> mHistory;
