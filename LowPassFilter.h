@@ -22,10 +22,10 @@ class LowPassFilter : public Filter
         float filter(float value)
         {
             unsigned long timestamp = millis();
-            unsigned long dt = timestamp - mLastTimestamp;
-            if (dt > 500)
+            float dt = (timestamp - mLastTimestamp) / 1000.0;
+            if (dt > 0.5)
                 return value;
-            mValue += (value - mValue) * mMultiplier * dt / 1000.0;
+            mValue += (value - mValue) * mMultiplier * dt;
             mLastTimestamp = timestamp;
             return mValue;
         }
