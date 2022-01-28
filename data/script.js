@@ -7,6 +7,7 @@ const graphConfig = {
 				borderColor: "#e02900",
 				backgroundColor: "#e0290066",
 				showLine: true,
+				cubicInterpolationMode: 'monotone',
 				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
 			},
 			{
@@ -14,6 +15,7 @@ const graphConfig = {
 				borderColor: "#a832a8",
 				backgroundColor: "#a832a8",
 				showLine: true,
+				cubicInterpolationMode: 'monotone',
 				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
 			},
 			{
@@ -21,6 +23,7 @@ const graphConfig = {
 				borderColor: "#0377fc",
 				backgroundColor: "#0377fc",
 				showLine: true,
+				cubicInterpolationMode: 'monotone',
 				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
 			}
 		],
@@ -304,8 +307,8 @@ minAjax({
 	type:"GET",
 	success: function(data){
 		data = JSON.parse(data)
-		power.value = data.heater == "on"
-		fanModeAuto.value = data.fan.mode == "auto"
+		power.checked = data.heater == "on"
+		fanModeAuto.checked = data.fan.mode == "auto"
 		fanSpeed.value = data.fan.speed
 		temperature.value = data.temperature
 	}
