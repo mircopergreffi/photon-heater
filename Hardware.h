@@ -50,9 +50,9 @@ class Hardware
 			mStatus.lastTimestamp = mStatus.currentTimestamp;
 		}
 
-		void setHeaterOn(bool heaterOn)
+		void setHeaterOn(bool heater)
 		{
-			mStatus.heater = heaterOn;
+			mStatus.heater = heater;
 		}
 		void setFanMode(fan_mode_t mode)
 		{
@@ -72,7 +72,7 @@ class Hardware
 			mFan.loadFromJson(json["fan"]);
 			mSensorHeater.loadFromJson(json["heater"]["sensor"]);
 			mSensorAir.loadFromJson(json["air"]["sensor"]);
-			// mSensorResin.loadFromJson(json["resin_sensor"]);
+			// mSensorResin.loadFromJson(json["resin"]["sensor"]);
 		}
 
 		void populateHistoryJson(JsonDocument & doc, unsigned long fromTimestamp)
