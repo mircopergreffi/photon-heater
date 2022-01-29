@@ -28,15 +28,22 @@ bool connectToWiFi(JsonDocument &doc)
 	const char * pass = doc["wifi"]["password"];
 
 	WiFi.begin(ssid, pass);
-	while (WiFi.status() != WL_CONNECTED) {
+	for (int i=0; i<20; i++) {
+		if (WiFi.status() != WL_CONNECTED)
+		{
+			// Print ESP32 Local IP Address
+			Serial.println(WiFi.localIP());
+			return true;
+		}
 		delay(1000);
 		Serial.println("Connecting to WiFi..");
 	}
 
-	// Print ESP32 Local IP Address
-	Serial.println(WiFi.localIP());
+	const char * ap_ssid = doc["wifi"]["ap_ssid"];
+	const char * ap_pass = doc["wifi"]["ap_password"];
 
-	return true;
+	WiFi.softAP(ap_ssid, ap_pass);
+	Serial.println(WiFi.softAPIP());
 }
 
 bool readConfigFile()
