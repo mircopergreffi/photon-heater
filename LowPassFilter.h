@@ -8,36 +8,36 @@
 
 class LowPassFilter : public Filter
 {
-    public:
-        LowPassFilter()
-        {
-            mValue = 0;
-            mLastTimestamp = 0;
-            setFrequency(0);
-        }
-        void loadFromJson(JsonObject json)
-        {
-            setFrequency(json["frequency"].as<float>());
-        }
-        float filter(float value)
-        {
-            unsigned long timestamp = millis();
-            float dt = (timestamp - mLastTimestamp) / 1000.0;
-            if (dt > 0.5)
-                return value;
-            mValue += (value - mValue) * mMultiplier * dt;
-            mLastTimestamp = timestamp;
-            return mValue;
-        }
-        void setFrequency(float frequency)
-        {
-            mFrequency = frequency;
-            mMultiplier = TWOPI * mFrequency;
-        }
-    private:
-        float mFrequency, mMultiplier;
-        unsigned long mLastTimestamp;
-        float mValue;
+	public:
+		LowPassFilter()
+		{
+			mValue = 0;
+			setFrequency(0);
+		}
+		// Loads values and parameters from json object
+		void loadFromJson(JsonObject json)
+		{
+			setFrequency(json["frequency"].as<float>());
+		}
+		float filter(float value, float dt)
+		{
+			// If the time difference is too large
+			// do not apply the filter
+			if (dt > 0.5)
+				mValue = value;
+			else
+				mValue += (value - mValue) * mMultiplier * dt;
+			return mValue;
+		}
+		// Set the frequency
+		void setFrequency(float frequency)
+		{
+			mFrequency = frequency;
+			mMultiplier = TWOPI * mFrequency;
+		}
+	private:
+		float mFrequency, mMultiplier;
+		float mValue;
 };
 
 #endif /* LOW_PASS_FILTER_H */

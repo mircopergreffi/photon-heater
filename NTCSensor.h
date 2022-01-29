@@ -15,11 +15,6 @@ class NTCSensor : public ResistorSensor
 		{
 			
 		}
-		NTCSensor(JsonObject json)
-		: ResistorSensor(json)
-		{
-			loadFromJson(json);
-		}
 		void loadFromJson(JsonObject json)
 		{
 			mBetaInverse = 1.0/json["B"].as<float>();
@@ -27,9 +22,9 @@ class NTCSensor : public ResistorSensor
 			mT0Inverse = 1.0/(json["T0"].as<float>()+273.15);
 			ResistorSensor::loadFromJson(json);
 		}
-		float readValue()
+		float readValue(float dt)
 		{
-			float R = ResistorSensor::readValue();
+			float R = ResistorSensor::readValue(dt);
 			// Steinhart–Hart equation:
 			return 1.0/(mT0Inverse + mBetaInverse*log(R/mR0)) - 273.15;
 		}

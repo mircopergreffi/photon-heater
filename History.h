@@ -29,6 +29,23 @@ class History
 			mBuffer.push(entry);
 		}
 
+		void run(Status &status)
+		{
+			if (status.currentTimestamp - mLastTimestampHistory >= 1000)
+			{
+				HistoryEntry<float, 3> entry;
+				entry.timestamp = status.currentTimestamp;
+				entry.values[0] = status.temperatureHeater;
+				entry.values[1] = status.temperatureAir;
+				// entry.values[2] = status.temperatureResin;
+				entry.values[2] = status.fanSpeed;
+				/* Start of critical section */
+				push(entry);
+				/* End of critical section */
+				mLastTimestampHistory = status.currentTimestamp;
+			}
+		}
+
 		void populateJson(JsonDocument & doc, unsigned long fromTimestamp) const
 		{
 			try
@@ -83,6 +100,7 @@ class History
 		}
 		
 	private:
+		unsigned long mLastTimestampHistory;
 		CircularBuffer<HistoryEntry<T, N>, size> mBuffer;
 		const char * mNames[N];
 };

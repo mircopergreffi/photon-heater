@@ -4,15 +4,21 @@
 
 class Filter
 {
-    public:
-        Filter()
-        {
+	public:
+		Filter()
+		{
 
-        }
-        virtual float filter(float value)
-        {
-            return value;
-        }
+		}
+		// Apply the filter
+		virtual float filter(float value, float dt)
+		{
+			return value;
+		}
+		// Loads values and parameters from json object
+		virtual void loadFromJson(JsonObject json)
+		{
+			
+		}
 };
 
 #endif /* FILTER_H */
