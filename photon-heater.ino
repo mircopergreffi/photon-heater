@@ -29,7 +29,7 @@ bool connectToWiFi(JsonDocument &doc)
 
 	WiFi.begin(ssid, pass);
 	for (int i=0; i<20; i++) {
-		if (WiFi.status() != WL_CONNECTED)
+		if (WiFi.status() == WL_CONNECTED)
 		{
 			// Print ESP32 Local IP Address
 			Serial.println(WiFi.localIP());

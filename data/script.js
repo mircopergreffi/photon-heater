@@ -142,7 +142,7 @@ sliders.forEach(s =>
 	})
 
 
-document.getElementById("fan-mode-auto").addEventListener('change', (e) =>
+const fanModeAutoChange = (e) =>
 {
 	if(e.target.checked)
 	{
@@ -152,7 +152,9 @@ document.getElementById("fan-mode-auto").addEventListener('change', (e) =>
 	{
 		fanSpeed.disabled = false
 	}
-})
+}
+
+document.getElementById("fan-mode-auto").addEventListener('change', fanModeAutoChange)
 
 const configs = {
 	"wifi":
@@ -318,6 +320,8 @@ setInterval(() =>
 			fanModeAuto.checked = data.fan.mode == "auto"
 			fanSpeed.value = data.fan.speed
 			temperature.value = data.temperature
+
+			fanModeAutoChange({target: fanModeAuto})
 		}
 	})
 }, 2000)
