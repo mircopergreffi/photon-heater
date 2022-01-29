@@ -283,11 +283,11 @@ function updateMaxMin(configs)
 		const l = e.parentElement.getElementsByTagName("label")[0]
 		const a = l.textContent.indexOf("(")
 		const b = l.textContent.indexOf(")")
-		l.textContent = l.textContent.substring(0, a) + min + "-" + max + l.textContent.substring(b, l.textContent.length)
+		l.textContent = l.textContent.substring(0, a - 1) + min + "-" + max + l.textContent.substring(b, l.textContent.length)
 		e.dispatchEvent(new Event('input'))
 	}
 
-	setRange(temperature, configs.heater.temp_max, configs.heater.temp_min)
+	setRange(temperature, configs.air.temp_max, configs.air.temp_min)
 	setRange(fanSpeed, configs.fan.speed_max, configs.fan.speed_min)
 }
 

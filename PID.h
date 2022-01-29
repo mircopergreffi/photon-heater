@@ -2,6 +2,8 @@
 #ifndef PID_H
 #define PID_H
 
+#include <ArduinoJson.h>
+
 enum PID_direction
 {
 	DIRECT = 0,
@@ -25,7 +27,45 @@ class PID
 			mOutputSum = 0;
 		}
 
-		float Compute(float input, float setpoint, float dt)
+		// Loads values and parameters from json object
+		void loadFromJson(JsonObject json)
+		{
+			float p = 0, i = 0, d = 0;
+			if (json.containsKey("p"))
+				p = json["p"].as<float>();
+			if (json.containsKey("i"))
+				i = json["i"].as<float>();
+			if (json.containsKey("d"))
+				d = json["d"].as<float>();
+			setTunings(p, i, d);
+
+			float min = 0, max = 0;
+			if (json.containsKey("min"))
+				min = json["min"].as<float>();
+			if (json.containsKey("max"))
+				max = json["max"].as<float>();
+			setOutputLimits(min, max);
+
+			if (json.containsKey("direction"))
+			{
+				String dir = json["direction"].as<String>();
+				if (dir.compareTo("direct") == 0)
+					setDirection(DIRECT);
+				else if (dir.compareTo("reverse") == 0)
+					setDirection(REVERSE);
+			}
+
+			if (json.containsKey("proportional"))
+			{
+				String prop = json["proportional"].as<String>();
+				if (prop.compareTo("error") == 0)
+					setProportionalOn(P_ON_E);
+				else if (prop.compareTo("measurement") == 0)
+					setProportionalOn(P_ON_M);
+			}
+		}
+
+		float compute(float input, float setpoint, float dt)
 		{
 			float error = setpoint - input;
 			float dinput = input - mLastInput;

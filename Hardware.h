@@ -6,13 +6,12 @@
 
 #include <ArduinoJson.h>
 
-#include "Status.h"
-#include "History.h"
-#include "Heater.h"
+#include "Air.h"
 #include "Fan.h"
+#include "Heater.h"
+#include "History.h"
 #include "NTCSensor.h"
-#include "LowPassFilter.h"
-#include "PID.h"
+#include "Status.h"
 
 const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
 
@@ -22,62 +21,38 @@ class Hardware
 		Hardware()
 		: mHistory(sensorNames)
 		{
-			mLastTimestamp = 0;
+			mStatus.lastTimestamp = 0;
 		}
 
 		void run()
 		{
-			unsigned long timestamp = millis();
-			if (timestamp - mLastTimestamp < 100)
+			// Read the current time
+			mStatus.currentTimestamp = millis();
+			// Returns if the time elapsed from the last execution is under 100ms
+			if (mStatus.currentTimestamp - mStatus.lastTimestamp < 100)
 				return;
 
-			mStatus.temperatureHeater = mFilterSensorHeater.filter(mSensorHeater.readValue());
-			mStatus.temperatureAir = mFilterSensorAir.filter(mSensorAir.readValue());
-			// mStatus.temperatureResin = mFilterSensorResin.filter(mSensorResin.readValue());
+			// Calculate the time difference in seconds
+			mStatus.dt = ((float)(mStatus.currentTimestamp - mStatus.lastTimestamp))/1000.0;
+			
+			// Read values from the sensors
+			mStatus.temperatureHeater = mSensorHeater.readValue(mStatus.dt);
+			mStatus.temperatureAir = mSensorAir.readValue(mStatus.dt);
+			// mStatus.temperatureResin = mSensorResin.readValue(mStatus.dt);
 
-			switch (mStatus.fanMode)
-			{
-				case FAN_AUTO:
-					if (mStatus.temperatureHeater - mStatus.temperatureAir >= 5)
-						mFan.setSpeed(1.0);
-					else
-						mFan.setSpeed(0.0);
-					break;
-				case FAN_MANUAL:
-					mFan.setSpeed(mStatus.fanManualSpeed);
-			}
+			// Run the various logics
+			mFan.run(mStatus);
+			mAir.run(mStatus);
+			mHeater.run(mStatus);
+			mHistory.run(mStatus);
 
-			if (mStatus.heater)
-			{
-				float dt = ((float)(timestamp - mLastTimestamp))/1000.0;
-				mStatus.powerHeater = mController.Compute(mStatus.temperatureHeater, mStatus.temperatureSetpoint, dt);
-			}
-			else
-			{
-				mStatus.powerHeater = 0;
-			}
-			mHeater.setPower(mStatus.powerHeater);
-
-			if (timestamp - mLastTimestampHistory >= 1000)
-			{
-				HistoryEntry<float, 3> entry;
-				entry.timestamp = timestamp;
-				entry.values[0] = mStatus.temperatureHeater;
-				entry.values[1] = mStatus.temperatureAir;
-				// entry.values[2] = mStatus.temperatureResin;
-				entry.values[2] = mFan.getSpeed();
-				/* Start of critical section */
-				mHistory.push(entry);
-				/* End of critical section */
-				mLastTimestampHistory = timestamp;
-			}
-
-			mLastTimestamp = timestamp;
+			// Store the current timestamp as the timestamp of the last execution
+			mStatus.lastTimestamp = mStatus.currentTimestamp;
 		}
 
-		void setHeaterOn(bool heaterOn)
+		void setHeaterOn(bool heater)
 		{
-			mStatus.heater = heaterOn;
+			mStatus.heater = heater;
 		}
 		void setFanMode(fan_mode_t mode)
 		{
@@ -87,21 +62,17 @@ class Hardware
 		{
 			mStatus.fanManualSpeed = speed;
 		}
-		void setTemperatureSetPoint(float temperature)
+		void setTemperature(float temperature)
 		{
-			mStatus.temperatureSetpoint = temperature;
+			mStatus.airSetpoint = temperature;
 		}
 		void loadFromJson(JsonDocument & json)
 		{
 			mHeater.loadFromJson(json["heater"]);
 			mFan.loadFromJson(json["fan"]);
 			mSensorHeater.loadFromJson(json["heater"]["sensor"]);
-			mSensorAir.loadFromJson(json["air_sensor"]);
-			mFilterSensorHeater.loadFromJson(json["heater"]["sensor"]["filter"]);
-			mFilterSensorAir.loadFromJson(json["air_sensor"]["filter"]);
-			// mSensorResin.loadFromJson(json["resin_sensor"]);
-			// mFilterSensorAir.loadFromJson(json["resin_sensor"]["filter"]);
-			mController.setTunings(json["control"]["p"].as<float>(), json["control"]["i"].as<float>(), json["control"]["d"].as<float>());
+			mSensorAir.loadFromJson(json["air"]["sensor"]);
+			// mSensorResin.loadFromJson(json["resin"]["sensor"]);
 		}
 
 		void populateHistoryJson(JsonDocument & doc, unsigned long fromTimestamp)
@@ -123,15 +94,12 @@ class Hardware
 			return mStatus;
 		}
 	private:
-		unsigned long mLastTimestamp, mLastTimestampHistory;
 		Status mStatus;
-		History<float, 3, HISTORY_SIZE> mHistory;
-		Heater mHeater;
 		Fan mFan;
-		NTCSensor mSensorHeater, mSensorAir;
-		LowPassFilter mFilterSensorHeater, mFilterSensorAir;
-		// NTCSensor mSensorResin;
-		PID mController;
+		Air mAir;
+		Heater mHeater;
+		History<float, 3, HISTORY_SIZE> mHistory;
+		NTCSensor mSensorHeater, mSensorAir /*, mSensorResin */;
 };
 
 #endif /* HARDWARE_H */

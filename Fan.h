@@ -17,12 +17,9 @@ class Fan
 	public:
 		Fan()
 		{
-
+			mSpeed = 0;
 		}
-		Fan(JsonObject json)
-		{
-			loadFromJson(json);
-		}
+		// Loads values and parameters from json object
 		void loadFromJson(JsonObject json)
 		{
 			mPin = json["pin"];
@@ -30,18 +27,55 @@ class Fan
 			mMinSpeed = json["speed_min"];
 			setup();
 		}
+		// Writes the digital output for controlling the fan speed
 		void setSpeed(float speed)
 		{
-			speed = purgeSpeed(speed);
+			// Clip the fan speed between its maximum and minimum
+			// values allowed.
+			if (speed > mMaxSpeed)
+				speed = mMaxSpeed;
+			if (speed < mMinSpeed && speed > 0)
+				speed = mMinSpeed;
+			// The output for the fan is inverted: the fan turns
+			// off when the output is high; the fan turns on when
+			// the output is low.
+			speed = 1 - speed;
+			// Clips the output according to the minimum and maximum
+			// duty cycles
+			if (speed < PWM_Fan_Duty_Cycle_Min)
+				speed = 0;
+			else if (speed > PWM_Fan_Duty_Cycle_Max)
+				speed = 1;
+			// If the new speed is different from the current speed
 			if (speed != mSpeed)
 			{
+				// Memorize the fan speed
 				mSpeed = speed;
+				// Write the digital output
 				ledcWrite(PWM_Fan_Ch, mSpeed*PWM_Fan_Max);
 			}
 		}
-		float getSpeed()
+		// Runs the fan logic
+		void run(Status &status)
 		{
-			return 1 - mSpeed;
+			// Calculate the fan speed given its current mode
+			switch (status.fanMode)
+			{
+				case FAN_AUTO:
+					// In automatic mode the fan turns on at full speed when the
+					// temperature difference between the heater core and air sensors
+					// is greater than 5 degrees.
+					if (status.temperatureHeater - status.temperatureAir >= 5)
+						status.fanSpeed = 1.0;
+					else
+						status.fanSpeed = 0.0;
+					break;
+				case FAN_MANUAL:
+					// In manual mode the fan turns at the given speed.
+					status.fanSpeed = status.fanManualSpeed;
+			}
+			// Set the fan speed
+			setSpeed(status.fanSpeed);
 		}
 	private:
 		void setup()
@@ -50,21 +84,8 @@ class Fan
 			ledcSetup(PWM_Fan_Ch, PWM_Fan_Freq, PWM_Fan_Rs);
 			ledcWrite(PWM_Fan_Ch, 0);
 		}
-		float purgeSpeed(float speed)
-		{
-			if (speed > mMaxSpeed)
-				speed = mMaxSpeed;
-			if (speed < mMinSpeed && speed > 0)
-				speed = mMinSpeed;
-			speed = 1 - speed;
-			if (speed < PWM_Fan_Duty_Cycle_Min)
-				speed = 0;
-			else if (speed > PWM_Fan_Duty_Cycle_Max)
-				speed = 1;
-			return speed;
-		}
 		int mPin;
-		float mSpeed = 0, mMaxSpeed, mMinSpeed;
+		float mSpeed, mMaxSpeed, mMinSpeed;
 };
 
 #endif /* FAN_H */

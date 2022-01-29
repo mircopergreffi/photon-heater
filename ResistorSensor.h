@@ -14,20 +14,14 @@ class ResistorSensor : public AnalogSensor
 		{
 
 		}
-		ResistorSensor(JsonObject json)
-		: AnalogSensor(json)
-		{
-			loadFromJson(json);
-			AnalogSensor::loadFromJson(json);
-		}
 		void loadFromJson(JsonObject json)
 		{
 			mPullUp = json["pullup"];
 			AnalogSensor::loadFromJson(json);
 		}
-		float readValue()
+		float readValue(float dt)
 		{
-			float v = AnalogSensor::readValue();
+			float v = AnalogSensor::readValue(dt);
 			return (v/(1.0-v)) * mPullUp;
 		}
 	private:

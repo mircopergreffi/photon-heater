@@ -204,9 +204,9 @@ void setup() {
 		}
 		else if (request->hasParam("temperature"))
 		{
-			mHardware.setTemperatureSetPoint(request->getParam("temperature")->value().toFloat());
+			mHardware.setTemperature(request->getParam("temperature")->value().toFloat());
 			Serial.print("Temperature set to: ");
-			Serial.println(mHardware.getStatus().temperatureSetpoint);
+			Serial.println(mHardware.getStatus().heaterSetpoint);
 			request->send(200, "plain/text", "temperature-set");
 		}
 		request->send(400, "plain/text", "nothing-set");
@@ -217,7 +217,7 @@ void setup() {
 		StaticJsonDocument<256> doc;
 		doc["fan"]["speed"] = mHardware.getStatus().fanManualSpeed;
 		doc["fan"]["mode"] = mHardware.getStatus().fanMode == FAN_AUTO ? "auto" : "manual";
-		doc["temperature"] = mHardware.getStatus().temperatureSetpoint;
+		doc["temperature"] = mHardware.getStatus().heaterSetpoint;
 		doc["heater"] = mHardware.getStatus().heater ? "on" : "off";
 		serializeJson(doc, *response);
 		request->send(response);

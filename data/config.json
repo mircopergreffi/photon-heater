@@ -13,8 +13,16 @@
 		"pin": "23",
 		"temp_max": 60,
 		"temp_min": 0,
-		"temp_critical": 80,
+		"temp_max_critical": 80,
+		"temp_min_critical": -30,
 		"power_max": 1.0,
+		"control":
+		{
+			"type": "pid",
+			"p": 0.2,
+			"i": 0.01,
+			"d": 0.0
+		},
 		"sensor": 
 		{
 			"name": "Heater",
@@ -39,21 +47,35 @@
 		"speed_min": 0.4
 	},
 	
-	"air_temp_max": 30,
-	"air_temp_min": 25,
-	"air_sensor": 
+	"air":
 	{
-		"name": "Air",
-		"type": "ntc",
-		"B": 3950,
-		"T0": 25,
-		"R0": 100000,
-		"pullup": 475500,
-		"pin": "34",
-		"filter":
+		"temp_max": 30,
+		"temp_min": 25,
+		"temp_max_critical": 40,
+		"temp_min_critical": -30,
+		"control":
 		{
-			"type": "lowpass",
-			"frequency": "2"
+			"type": "pid",
+			"p": 60,
+			"i": 0.01,
+			"d": 0.0,
+			"max": 60,
+			"min": 0
+		},
+		"sensor": 
+		{
+			"name": "Air",
+			"type": "ntc",
+			"B": 3950,
+			"T0": 25,
+			"R0": 100000,
+			"pullup": 475500,
+			"pin": "34",
+			"filter":
+			{
+				"type": "lowpass",
+				"frequency": "2"
+			}
 		}
 	},
 
@@ -71,13 +93,6 @@
 			"type": "lowpass",
 			"frequency": "2"
 		}
-	},
-
-	"control":
-	{
-		"type": "pid",
-		"p": 0.2,
-		"i": 0.01,
-		"d": 0.0
 	}
+
 }
