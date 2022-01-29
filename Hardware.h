@@ -68,6 +68,7 @@ class Hardware
 		}
 		void loadFromJson(JsonDocument & json)
 		{
+			mAir.loadFromJson(json["air"]);
 			mHeater.loadFromJson(json["heater"]);
 			mFan.loadFromJson(json["fan"]);
 			mSensorHeater.loadFromJson(json["heater"]["sensor"]);
