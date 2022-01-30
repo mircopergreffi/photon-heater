@@ -25,6 +25,14 @@ const graphConfig = {
 				showLine: true,
 				cubicInterpolationMode: 'monotone',
 				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
+			},
+			{
+				label: "Power",
+				borderColor: "#ffa500",
+				backgroundColor: "#ffa500",
+				showLine: true,
+				cubicInterpolationMode: 'monotone',
+				data: [{x: 10, y: 5}, {x: 20, y: 10}, {x: 30, y: 10}, {x: 40, y: 15}, {x: 50, y: 5}],
 			}
 		],
 	},
@@ -371,9 +379,14 @@ setInterval(() =>
 			{
 				return {x: timestamps[i], y: f*100}
 			})
+			const power = data.Power.map((f,i) =>
+			{
+				return {x: timestamps[i], y: f*100}
+			})
 			myChart.data.datasets[0].data = heater
 			myChart.data.datasets[1].data = air
 			myChart.data.datasets[2].data = fans
+			myChart.data.datasets[3].data = poower
 			myChart.update()
 		}
 	})

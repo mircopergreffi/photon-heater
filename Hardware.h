@@ -2,7 +2,7 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define HISTORY_SIZE 60
+#define HISTORY_SIZE 120
 
 #include <ArduinoJson.h>
 
@@ -13,7 +13,7 @@
 #include "NTCSensor.h"
 #include "Status.h"
 
-const char * sensorNames[] = {"Heater","Air","Fan" /*, "Resin" */};
+const char * sensorNames[] = {"Heater","Air","Fan", "Power"/*, "Resin" */};
 
 class Hardware
 {
@@ -29,12 +29,13 @@ class Hardware
 		{
 			if (status.currentTimestamp - mLastTimestampHistory >= 1000)
 			{
-				HistoryEntry<float, 3> entry;
+				HistoryEntry<float, 4> entry;
 				entry.timestamp = status.currentTimestamp;
 				entry.values[0] = status.temperatureHeater;
 				entry.values[1] = status.temperatureAir;
 				// entry.values[2] = status.temperatureResin;
 				entry.values[2] = status.fanSpeed;
+				entry.values[3] = status.powerHeater;
 				/* Start of critical section */
 				mHistory.push(entry);
 				/* End of critical section */
@@ -118,7 +119,7 @@ class Hardware
 		Fan mFan;
 		Air mAir;
 		Heater mHeater;
-		History<float, 3, HISTORY_SIZE> mHistory;
+		History<float, 4, HISTORY_SIZE> mHistory;
 		NTCSensor mSensorHeater, mSensorAir /*, mSensorResin */;
 };
 
