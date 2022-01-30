@@ -31,8 +31,7 @@ class Air
 					exceededMaxCounter++;
 			else
 				exceededMaxCounter = 0;
-			
-			Serial.println(exceededMaxCounter);
+
 			if(exceededMaxCounter >= exceededMaxThreshold)
 				status.heater = false;
 			// If the heater is on calculate the heater temperature setpoint

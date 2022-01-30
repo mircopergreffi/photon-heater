@@ -39,7 +39,7 @@ class PID
 				d = json["d"].as<float>();
 			setTunings(p, i, d);
 
-			float min = 0, max = 0;
+			float min = 0, max = 1;
 			if (json.containsKey("min"))
 				min = json["min"].as<float>();
 			if (json.containsKey("max"))
