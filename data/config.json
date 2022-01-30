@@ -31,11 +31,12 @@
 			"T0": 25,
 			"R0": 100000,
 			"pullup": 47240,
-			"pin": "35",
+			"pin": "7",
+			"attenuation": "11dB",
 			"filter":
 			{
 				"type": "lowpass",
-				"frequency": "0.5"
+				"frequency": "0.2"
 			}
 		}
 	},
@@ -71,11 +72,12 @@
 			"T0": 25,
 			"R0": 100000,
 			"pullup": 475500,
-			"pin": "34",
+			"pin": "6",
+			"attenuation": "6dB",
 			"filter":
 			{
 				"type": "lowpass",
-				"frequency": "0.5"
+				"frequency": "0.2"
 			}
 		}
 	},
@@ -88,11 +90,12 @@
 		"T0": 25,
 		"R0": 100000,
 		"pullup": 47000,
-		"pin": "27",
+		"pin": "4",
+		"attenuation": "6dB",
 		"filter":
 		{
 			"type": "lowpass",
-			"frequency": "0.5"
+			"frequency": "0.2"
 		}
 	}
 
