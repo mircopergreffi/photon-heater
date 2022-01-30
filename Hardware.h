@@ -22,6 +22,24 @@ class Hardware
 		: mHistory(sensorNames)
 		{
 			mStatus.lastTimestamp = 0;
+			mLastTimestampHistory = 0;
+		}
+
+		void runHistory(Status &status)
+		{
+			if (status.currentTimestamp - mLastTimestampHistory >= 1000)
+			{
+				HistoryEntry<float, 3> entry;
+				entry.timestamp = status.currentTimestamp;
+				entry.values[0] = status.temperatureHeater;
+				entry.values[1] = status.heaterSetpoint;
+				// entry.values[2] = status.temperatureResin;
+				entry.values[2] = status.powerHeater;
+				/* Start of critical section */
+				mHistory.push(entry);
+				/* End of critical section */
+				mLastTimestampHistory = status.currentTimestamp;
+			}
 		}
 
 		void run()
@@ -44,7 +62,7 @@ class Hardware
 			mFan.run(mStatus);
 			mAir.run(mStatus);
 			mHeater.run(mStatus);
-			mHistory.run(mStatus);
+			runHistory(mStatus);
 
 			// Store the current timestamp as the timestamp of the last execution
 			mStatus.lastTimestamp = mStatus.currentTimestamp;
@@ -95,6 +113,7 @@ class Hardware
 			return mStatus;
 		}
 	private:
+		unsigned long mLastTimestampHistory;
 		Status mStatus;
 		Fan mFan;
 		Air mAir;
