@@ -49,10 +49,11 @@
 	
 	"air":
 	{
-		"temp_max": 30,
+		"temp_max": 35,
 		"temp_min": 25,
 		"temp_max_critical": 40,
 		"temp_min_critical": -30,
+		"critical_threshold": 10,
 		"control":
 		{
 			"type": "pid",

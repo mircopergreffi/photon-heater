@@ -20,6 +20,7 @@ class Air
 			mTempMin = json["temp_min"];
 			mTempMaxCritical = json["temp_max_critical"];
 			mTempMinCritical = json["temp_min_critical"];
+			exceededMaxThreshold = json["critical_threshold"];
 			mController.loadFromJson(json["control"]);
 		}
 		void run(Status &status)
@@ -27,6 +28,12 @@ class Air
 			// Shutdown heater in case it execeds the critical temperatures
 			if (status.temperatureAir >= mTempMaxCritical
 				|| status.temperatureAir <= mTempMinCritical)
+					exceededMaxCounter++;
+			else
+				exceededMaxCounter = 0;
+			
+			Serial.println(exceededMaxCounter);
+			if(exceededMaxCounter >= exceededMaxThreshold)
 				status.heater = false;
 			// If the heater is on calculate the heater temperature setpoint
 			if (status.heater)
@@ -41,6 +48,7 @@ class Air
 	private:
 		float mTempMax, mTempMin;
 		float mTempMaxCritical, mTempMinCritical;
+		int exceededMaxThreshold, exceededMaxCounter = 0;
 		PID mController;
 };
 

@@ -293,8 +293,8 @@ function updateMaxMin(configs)
 
 function updateGraph(configs)
 {
-	myChart.options.plugins.annotation.annotations.criticalLine.yMin = configs.heater.temp_critical
-	myChart.options.plugins.annotation.annotations.criticalLine.yMax = configs.heater.temp_critical
+	myChart.options.plugins.annotation.annotations.criticalLine.yMin = configs.heater.temp_max_critical
+	myChart.options.plugins.annotation.annotations.criticalLine.yMax = configs.heater.temp_max_critical
 	myChart.options.scales.y.suggestedMax = configs.heater.temp_max
 	myChart.options.scales.y.suggestedMin = configs.heater.temp_min
 	myChart.update()
