@@ -36,7 +36,7 @@ class History
 				HistoryEntry<float, 3> entry;
 				entry.timestamp = status.currentTimestamp;
 				entry.values[0] = status.temperatureHeater;
-				entry.values[1] = status.heaterSetpoint;
+				entry.values[1] = status.temperatureAir;
 				// entry.values[2] = status.temperatureResin;
 				entry.values[2] = status.fanSpeed;
 				/* Start of critical section */
