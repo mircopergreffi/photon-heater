@@ -35,7 +35,7 @@
 			"filter":
 			{
 				"type": "lowpass",
-				"frequency": "2"
+				"frequency": "0.5"
 			}
 		}
 	},
@@ -75,7 +75,7 @@
 			"filter":
 			{
 				"type": "lowpass",
-				"frequency": "2"
+				"frequency": "0.5"
 			}
 		}
 	},
@@ -92,7 +92,7 @@
 		"filter":
 		{
 			"type": "lowpass",
-			"frequency": "2"
+			"frequency": "0.5"
 		}
 	}
 
