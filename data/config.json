@@ -14,7 +14,7 @@
 		"temp_max": 60,
 		"temp_min": 0,
 		"temp_max_critical": 80,
-		"temp_min_critical": -30,
+		"temp_min_critical": -10,
 		"power_max": 1.0,
 		"control":
 		{
@@ -53,7 +53,7 @@
 		"temp_max": 35,
 		"temp_min": 25,
 		"temp_max_critical": 40,
-		"temp_min_critical": -30,
+		"temp_min_critical": -10,
 		"critical_threshold": 10,
 		"control":
 		{
