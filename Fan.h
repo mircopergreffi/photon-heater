@@ -18,6 +18,9 @@ class Fan
 		Fan()
 		{
 			mSpeed = 0;
+			mStarted = false;
+			mStartedTimestamp = 0;
+			mBoostTime = 1000;
 		}
 		// Loads values and parameters from json object
 		void loadFromJson(JsonObject json)
@@ -25,6 +28,8 @@ class Fan
 			mPin = json["pin"];
 			mMaxSpeed = json["speed_max"];
 			mMinSpeed = json["speed_min"];
+			if (json.containsKey("boost_time"))
+				mBoostTime = json["boost_time"].as<float>() * 1000;
 			setup();
 		}
 		// Writes the digital output for controlling the fan speed
@@ -74,8 +79,24 @@ class Fan
 					// In manual mode the fan turns at the given speed.
 					status.fanSpeed = status.fanManualSpeed;
 			}
+
 			// Set the fan speed
-			setSpeed(status.fanSpeed);
+			if (status.fanSpeed > 0 && !mStarted)
+			{
+				setSpeed(1);
+				mStarted = true;
+				mStartedTimestamp = status.currentTimestamp;
+			}
+			else
+			{
+				if (status.currentTimestamp - mStartedTimestamp > mBoostTime)
+					setSpeed(status.fanSpeed);
+			}
+
+			if (mStarted && status.fanSpeed == 0)
+			{
+				mStarted = false;
+			}
 		}
 	private:
 		void setup()
@@ -86,6 +107,9 @@ class Fan
 		}
 		int mPin;
 		float mSpeed, mMaxSpeed, mMinSpeed;
+		bool mStarted;
+		unsigned long mBoostTime;
+		unsigned long mStartedTimestamp;
 };
 
 #endif /* FAN_H */

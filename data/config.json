@@ -45,7 +45,8 @@
 	{
 		"pin": "22",
 		"speed_max": 1.0,
-		"speed_min": 0.4
+		"speed_min": 0.4,
+		"boost_time": 1.0
 	},
 	
 	"air":
