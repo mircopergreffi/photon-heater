@@ -138,12 +138,18 @@ fanSpeed.addEventListener("change", e =>
 })
 const sliders = Array.from(document.getElementsByClassName("range-slidecontainer"))
 
+const updateSliderValue = s =>
+{
+	const input = s.getElementsByClassName("range-slider")[0]
+	const out = s.getElementsByClassName("range-output")[0]
+	out.textContent = out.textContent.substring(0, out.textContent.indexOf(": ")+2) + input.value
+}
+
 sliders.forEach(s =>
 	{
 		const input = s.getElementsByClassName("range-slider")[0]
 		const setValue = () => {
-			const out = s.getElementsByClassName("range-output")[0]
-			out.textContent = out.textContent.substring(0, out.textContent.indexOf(": ")+2) + input.value
+			updateSliderValue(s)
 		}
 		input.addEventListener('input', setValue)
 		setValue()
@@ -330,6 +336,8 @@ setInterval(() =>
 			temperature.value = data.temperature
 
 			fanModeAutoChange({target: fanModeAuto})
+			updateSliderValue(temperature)
+			updateSliderValue(fanSpeed)
 		}
 	})
 }, 2000)
@@ -386,7 +394,7 @@ setInterval(() =>
 			myChart.data.datasets[0].data = heater
 			myChart.data.datasets[1].data = air
 			myChart.data.datasets[2].data = fans
-			myChart.data.datasets[3].data = poower
+			myChart.data.datasets[3].data = power
 			myChart.update()
 		}
 	})
