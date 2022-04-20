@@ -4,7 +4,6 @@
 #define NTC_SENSOR_H
 
 #include <math.h>
-#include <ArduinoJson.h>
 #include "ResistorSensor.h"
 
 class NTCSensor : public ResistorSensor
@@ -15,7 +14,7 @@ class NTCSensor : public ResistorSensor
 		{
 			
 		}
-		void loadFromJson(JsonObject json)
+		void loadFromJson(JsonObject const &json) throw(InvalidJsonException)
 		{
 			mBetaInverse = 1.0/json["B"].as<float>();
 			mR0 = json["R0"];

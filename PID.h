@@ -3,6 +3,7 @@
 #define PID_H
 
 #include <ArduinoJson.h>
+#include "Controller.h"
 
 enum PID_direction
 {
@@ -15,12 +16,11 @@ enum PID_proportional_on
 	P_ON_E = 1
 };
 
-class PID
+class PID : public Controller
 {
 	public:
 		PID()
 		{
-			setOutputLimits(0.0, 1.0);
 			setDirection(DIRECT);
 			setProportionalOn(P_ON_E);
 			mLastInput = 0;
@@ -28,8 +28,10 @@ class PID
 		}
 
 		// Loads values and parameters from json object
-		void loadFromJson(JsonObject json)
+		void loadFromJson(JsonObject& json)
 		{
+			Controller::loadFromJson(json);
+			
 			float p = 0, i = 0, d = 0;
 			if (json.containsKey("p"))
 				p = json["p"].as<float>();
@@ -38,13 +40,6 @@ class PID
 			if (json.containsKey("d"))
 				d = json["d"].as<float>();
 			setTunings(p, i, d);
-
-			float min = 0, max = 1;
-			if (json.containsKey("min"))
-				min = json["min"].as<float>();
-			if (json.containsKey("max"))
-				max = json["max"].as<float>();
-			setOutputLimits(min, max);
 
 			if (json.containsKey("direction"))
 			{
@@ -73,10 +68,7 @@ class PID
 			mOutputSum += mKI * error * dt;
 			if (mProportionalOn == P_ON_M)
 				mOutputSum -= mKP * dinput;
-			if (mOutputSum > mOutputMax)
-				mOutputSum = mOutputMax;
-			else if (mOutputSum < mOutputMin)
-				mOutputSum = mOutputMin;
+			boundOutput(mOutputSum);
 			
 			float output;
 			if (mProportionalOn == P_ON_E)
@@ -85,11 +77,7 @@ class PID
 				output = 0;
 			
 			output += mOutputSum - mKD * dinput / dt;
-			
-			if (output > mOutputMax)
-				output = mOutputMax;
-			else if (output < mOutputMin)
-				output = mOutputMin;
+			boundOutput(output);
 			
 			mLastInput = input;
 
@@ -102,11 +90,6 @@ class PID
 			mKI = ki;
 			mKD = kd;
 		}
-		void setOutputLimits(float min, float max)
-		{
-			mOutputMin = min;
-			mOutputMax = max;
-		}
 		void setDirection(PID_direction direction)
 		{
 			mDirection = direction;
@@ -118,7 +101,6 @@ class PID
 	private:
 		float mOutputSum, mLastInput;
 		float mKP, mKI, mKD;
-		float mOutputMin, mOutputMax;
 		PID_direction mDirection;
 		PID_proportional_on mProportionalOn;
 };

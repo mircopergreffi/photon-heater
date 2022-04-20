@@ -1,19 +1,19 @@
 
-#ifndef LOW_PASS_FILTER_H
-#define LOW_PASS_FILTER_H
+#ifndef HIGH_PASS_FILTER_H
+#define HIGH_PASS_FILTER_H
 
 #define TWOPI 6.28318530718
 
 #include "Filter.h"
 
 /** 
- * Low Pass Filter
+ * High Pass Filter
  */
 
-class LowPassFilter : public Filter
+class HighPassFilter : public Filter
 {
 	public:
-		LowPassFilter()
+		HighPassFilter()
 		{
 			mValue = 0;
 			setFrequency(0);
@@ -22,8 +22,7 @@ class LowPassFilter : public Filter
 		void loadFromJson(JsonObject const &json)
 		{
 			Filter::loadFromJson(json);
-			if (json.containsKey("frequency"))
-				setFrequency(json["frequency"].as<float>());
+			setFrequency(json["frequency"].as<float>());
 		}
 		// Apply the filter
 		float filter(float value, float dt)
@@ -47,4 +46,4 @@ class LowPassFilter : public Filter
 		float mValue;
 };
 
-#endif /* LOW_PASS_FILTER_H */
+#endif /* HIGH_PASS_FILTER_H */

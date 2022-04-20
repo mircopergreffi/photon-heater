@@ -3,16 +3,14 @@
 #ifndef ANALOG_SENSOR_H
 #define ANALOG_SENSOR_H
 
-#include <Arduino.h>
-#include <String.h>
-#include <ArduinoJson.h>
 #include <driver/adc.h>
 #include <esp_adc_cal.h>
 
 #include "Filter.h"
 #include "LowPassFilter.h"
+#include "Sensor.h"
 
-class AnalogSensor
+class AnalogSensor : public Sensor
 {
 	public:
 		AnalogSensor()
@@ -20,23 +18,21 @@ class AnalogSensor
 			mFilter = nullptr;
 			mAtten = ADC_ATTEN_11db;
 		}
-		void loadFromJson(JsonObject json)
+		void loadFromJson(JsonObject const &json) throw(InvalidJsonException)
 		{
+			Sensor::loadFromJson(json);
+
 			mPin = json["pin"].as<int>();
 			mChannel = (adc1_channel_t) mPin;
 			mName = json["name"].as<String>();
+
 			if (mFilter != nullptr)
-			{
 				delete mFilter;
-				mFilter = nullptr;
-			}
 			if (json.containsKey("filter"))
-			{
-				if (json["filter"]["type"].as<String>().compareTo("lowpass") == 0)
-					mFilter = new LowPassFilter();
-				if (mFilter != nullptr)
-					mFilter->loadFromJson(json["filter"]);
-			}
+				mFilter = Filter::fromJson(json["filter"]);
+			else
+				mFilter = nullptr;
+			
 			if (json.containsKey("attenuation"))
 			{
 				String attenuation = json["attenuation"].as<String>();
@@ -49,11 +45,10 @@ class AnalogSensor
 				else if (attenuation.compareTo("11dB") == 0)
 					mAtten = ADC_ATTEN_11db;
 			}
-			adc1_config_width(ADC_WIDTH_BIT_12);
-			adc1_config_channel_atten(mChannel, mAtten);
-			esp_adc_cal_characterize(ADC_UNIT_1, mAtten, ADC_WIDTH_BIT_12, 1100, &mADCChars);
+
+			setupADC();
 		}
-		virtual float readValue(float dt)
+		float readValue(float dt)
 		{
 			float value = ((float) (esp_adc_cal_raw_to_voltage(adc1_get_raw(mChannel), &mADCChars)));
 			// Convert millivolts to volts
@@ -64,6 +59,13 @@ class AnalogSensor
 		}
 
 	private:
+		void setupADC()
+		{
+			adc1_config_width(ADC_WIDTH_BIT_12);
+			adc1_config_channel_atten(mChannel, mAtten);
+			esp_adc_cal_characterize(ADC_UNIT_1, mAtten, ADC_WIDTH_BIT_12, 1100, &mADCChars);
+		}
+
 		int mPin;
 		String mName;
 		Filter * mFilter;

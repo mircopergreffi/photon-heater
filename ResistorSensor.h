@@ -3,8 +3,6 @@
 #ifndef RESISTOR_SENSOR_H
 #define RESISTOR_SENSOR_H
 
-#include <Arduino.h>
-
 #include "AnalogSensor.h"
 
 class ResistorSensor : public AnalogSensor
@@ -15,12 +13,12 @@ class ResistorSensor : public AnalogSensor
 		{
 			mRefVoltage = 3.3;
 		}
-		void loadFromJson(JsonObject json)
+		void loadFromJson(JsonObject const &json) throw(InvalidJsonException)
 		{
+			AnalogSensor::loadFromJson(json);
 			mPullUp = json["pullup"];
 			if (json.containsKey("ref_voltage"))
 				mRefVoltage = json["ref_voltage"].as<float>();
-			AnalogSensor::loadFromJson(json);
 		}
 		float readValue(float dt)
 		{

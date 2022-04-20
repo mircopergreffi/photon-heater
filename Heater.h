@@ -30,7 +30,7 @@ class Heater
 			mTempMaxCritical = json["temp_max_critical"];
 			mTempMinCritical = json["temp_min_critical"];
 			mPowerMax = json["power_max"];
-			mController.loadFromJson(json["control"]);
+			mController = Controller::fromJson(json["controller"]);
 			setup();
 		}
 		// Sets power output
@@ -62,7 +62,7 @@ class Heater
 				if (status.heaterSetpoint < mTempMin)
 					status.heaterSetpoint = mTempMin;
 				// Calculate the power output according to the controller scheme
-				status.powerHeater = mController.compute(status.temperatureHeater, status.heaterSetpoint, status.dt);
+				status.powerHeater = mController->compute(status.temperatureHeater, status.heaterSetpoint, status.dt);
 			}
 			else
 			{
@@ -88,7 +88,7 @@ class Heater
 		float mTempMax, mTempMin;
 		float mTempMaxCritical, mTempMinCritical;
 		float mPowerMax;
-		PID mController;
+		Controller * mController;
 };
 
 #endif /* HEATER_H */
