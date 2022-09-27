@@ -5,5 +5,5 @@ Can control temperature using a temperature sensor/transducer.
 Can control a fan.  
 
 ### Personal notes
-http://tipregostampa/
-Changing hostname requires reboot
+http://tipregostampa/  
+Changing hostname requires reboot  
